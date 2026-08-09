@@ -1,0 +1,27 @@
+name: PR Build
+on:
+  pull_request:
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Build
+        env:
+          CDK_DEFAULT_ACCOUNT: 108929950724
+          CDK_DEFAULT_REGION: us-east-1
+        run: |
+          cd cdk
+          npm i
+          npm run synth -- -q

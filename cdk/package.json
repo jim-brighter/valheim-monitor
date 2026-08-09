@@ -5,7 +5,12 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "cdk:deploy": "cdk deploy --all --require-approval never --outputs-file outputs.json",
+    "cdk:lambda:install": "cd ../lambda && npm i && cd ../cdk",
+    "cdk:lambda:test": "cd ../lambda && npm test && cd ../cdk",
+    "deploy": "npm run cdk:lambda:install && npm run cdk:lambda:test && npm run cdk:deploy",
+    "synth": "npm run cdk:lambda:install && npm run cdk:lambda:test && cdk synth --all"
   },
   "devDependencies": {
     "@swc/core": "^1.15.0",
