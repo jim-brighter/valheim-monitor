@@ -39,7 +39,7 @@ export class ValheimMonitorStack extends cdk.Stack {
 
     table.grantReadWriteData(lambda);
 
-    const secret = Secret.fromSecretCompleteArn(this, 'ValheimMonitorSecret', 'arn:aws:secretsmanager:us-east-1:108929950724:secret:valheim-monitor-secrets-bp6Izr');
+    const secret = Secret.fromSecretNameV2(this, 'ValheimMonitorSecret', 'valheim-monitor-secrets');
     secret.grantRead(lambda);
 
     const rule = new Rule(this, 'ValheimMonitorSchedule', {
