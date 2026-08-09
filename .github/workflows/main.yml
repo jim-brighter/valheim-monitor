@@ -1,0 +1,35 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::108929950724:role/GithubRole
+          aws-region: us-east-1
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Deploy
+        run: |
+          cd cdk
+          npm i
+          npm run deploy
+      - name: Create Release
+        uses: jim-brighter/github-release-action@v5
+        with:
+          num_releases_to_keep: 10
