@@ -147,4 +147,101 @@ describe('evaluateStatusChange', () => {
 
     expect(result.shouldNotify).toBe(false);
   });
+
+  it('should notify when server version is updated', () => {
+    const agentState = {
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.28',
+      updatedTimestamp: now - 30_000
+    };
+    const lambdaState = {
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.27'
+    };
+
+    const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
+
+    expect(result.shouldNotify).toBe(true);
+    expect(result.messageContent).toContain('Server was updated to version 0.217.28');
+    expect(result.updatedLambdaState).toEqual({
+      PK: 'lambda-status',
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.28'
+    });
+  });
+
+  it('should notify version change alongside status and IP changes', () => {
+    const agentState = {
+      ipAddress: '5.6.7.8',
+      status: 'active',
+      currentVersion: '0.217.28',
+      updatedTimestamp: now - 10_000
+    };
+    const lambdaState = {
+      ipAddress: '1.2.3.4',
+      status: 'inactive',
+      currentVersion: '0.217.27'
+    };
+
+    const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
+
+    expect(result.shouldNotify).toBe(true);
+    expect(result.messageContent).toContain('New Address: 5.6.7.8:2456');
+    expect(result.messageContent).toContain('Server Status: 🟢 Up');
+    expect(result.messageContent).toContain('Server was updated to version 0.217.28');
+    expect(result.updatedLambdaState).toEqual({
+      PK: 'lambda-status',
+      ipAddress: '5.6.7.8',
+      status: 'active',
+      currentVersion: '0.217.28'
+    });
+  });
+
+  it('should not notify when version, status, and IP all match', () => {
+    const agentState = {
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.28',
+      updatedTimestamp: now - 30_000
+    };
+    const lambdaState = {
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.28'
+    };
+
+    const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
+
+    expect(result.shouldNotify).toBe(false);
+    expect(result.updatedLambdaState).toBeNull();
+    expect(result.messageContent).toBeNull();
+  });
+
+  it('should notify and record currentVersion on first run when lambdaState has no currentVersion recorded', () => {
+    const agentState = {
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.28',
+      updatedTimestamp: now - 30_000
+    };
+    const lambdaState = {
+      ipAddress: '1.2.3.4',
+      status: 'active'
+      // currentVersion is missing / undefined
+    };
+
+    const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
+
+    expect(result.shouldNotify).toBe(true);
+    expect(result.messageContent).toContain('Server was updated to version 0.217.28');
+    expect(result.updatedLambdaState).toEqual({
+      PK: 'lambda-status',
+      ipAddress: '1.2.3.4',
+      status: 'active',
+      currentVersion: '0.217.28'
+    });
+  });
 });
