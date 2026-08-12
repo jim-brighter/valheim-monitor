@@ -12,8 +12,8 @@ import { CONFIG } from './config.js';
  * @returns {{ shouldNotify: boolean, updatedLambdaState: Object|null, messageContent: string|null }}
  */
 export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secrets = {}, now = Date.now() }) {
-  const { ipAddress: agentIp, status: agentStatus, updatedTimestamp: agentUpdateTimestamp } = agentState;
-  const { ipAddress: lambdaIp, status: lambdaStatus } = lambdaState;
+  const { ipAddress: agentIp, status: agentStatus, currentVersion: agentVersion, updatedTimestamp: agentUpdateTimestamp } = agentState;
+  const { ipAddress: lambdaIp, status: lambdaStatus, currentVersion: lambdaVersion } = lambdaState;
 
   const diff = agentUpdateTimestamp ? now - agentUpdateTimestamp : Infinity;
   if (Number.isFinite(diff)) {
@@ -23,10 +23,14 @@ export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secret
   }
 
   const updateTooOld = diff > CONFIG.AGENT_TIMEOUT_MS;
-  const hasBeenDown = updateTooOld && lambdaStatus === 'inactive';
-  const shouldNotNotify = hasBeenDown || (!updateTooOld && agentIp === lambdaIp && agentStatus === lambdaStatus);
+  const isAlreadyDown = updateTooOld && lambdaStatus === 'inactive';
+  const isUnchanged =
+    !updateTooOld &&
+    agentIp === lambdaIp &&
+    agentStatus === lambdaStatus &&
+    agentVersion === lambdaVersion;
 
-  if (shouldNotNotify) {
+  if (isAlreadyDown || isUnchanged) {
     return {
       shouldNotify: false,
       updatedLambdaState: null,
@@ -38,7 +42,8 @@ export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secret
   const updatedLambdaState = {
     PK: CONFIG.STATUS_KEYS.LAMBDA,
     ipAddress: lambdaIp,
-    status: lambdaStatus
+    status: lambdaStatus,
+    currentVersion: lambdaVersion
   };
 
   if (agentIp !== lambdaIp) {
@@ -53,6 +58,11 @@ export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secret
     const statusMessage = serverStatus === 'active' ? '🟢 Up' : '🔴 Down';
     messageContent += `\nServer Status: ${statusMessage}`;
     updatedLambdaState.status = serverStatus;
+  }
+
+  if (agentVersion !== lambdaVersion) {
+    messageContent += `\nServer was updated to version ${agentVersion}`;
+    updatedLambdaState.currentVersion = agentVersion;
   }
 
   return {
