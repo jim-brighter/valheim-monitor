@@ -7,10 +7,11 @@
     "test": "jest",
     "cdk": "cdk",
     "cdk:deploy": "cdk deploy --all --require-approval never --outputs-file outputs.json",
-    "cdk:lambda:install": "cd ../lambda && npm i && cd ../cdk",
-    "cdk:lambda:test": "cd ../lambda && npm test && cd ../cdk",
-    "deploy": "npm run cdk:lambda:install && npm run cdk:lambda:test && npm run cdk:deploy",
-    "synth": "npm run cdk:lambda:install && npm run cdk:lambda:test && cdk synth --all"
+    "cdk:monitor-lambda:install": "cd ../monitor-lambda && npm i && cd ../cdk",
+    "cdk:monitor-lambda:test": "cd ../monitor-lambda && npm test && cd ../cdk",
+    "cdk:llm-lambda:install": "cd ../llm-lambda && npm i && cd ../cdk",
+    "deploy": "npm run cdk:llm-lambda:install && npm run cdk:monitor-lambda:install && npm run cdk:monitor-lambda:test && npm run cdk:deploy",
+    "synth": "npm run cdk:llm-lambda:install && npm run cdk:monitor-lambda:install && npm run cdk:monitor-lambda:test && cdk synth --all"
   },
   "devDependencies": {
     "@swc/core": "^1.15.0",

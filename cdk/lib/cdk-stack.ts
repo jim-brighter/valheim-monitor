@@ -21,11 +21,11 @@ export class ValheimMonitorStack extends cdk.Stack {
       deletionProtection: false
     });
 
-    const lambda = new NodejsFunction(this, 'ValheimMonitorLambda', {
+    const monitorLambda = new NodejsFunction(this, 'ValheimMonitorLambda', {
       runtime: Runtime.NODEJS_24_X,
       handler: 'handler',
-      depsLockFilePath: '../lambda/package-lock.json',
-      entry: '../lambda/handler.js',
+      depsLockFilePath: '../monitor-lambda/package-lock.json',
+      entry: '../monitor-lambda/handler.js',
       environment: {
         TABLE_NAME: table.tableName
       },
@@ -37,15 +37,15 @@ export class ValheimMonitorStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(30)
     });
 
-    table.grantReadWriteData(lambda);
+    table.grantReadWriteData(monitorLambda);
 
     const secret = Secret.fromSecretNameV2(this, 'ValheimMonitorSecret', 'valheim-monitor-secrets');
-    secret.grantRead(lambda);
+    secret.grantRead(monitorLambda);
 
     const rule = new Rule(this, 'ValheimMonitorSchedule', {
       schedule: Schedule.cron({ minute: '*/5' })
     });
 
-    rule.addTarget(new LambdaFunction(lambda));
+    rule.addTarget(new LambdaFunction(monitorLambda));
   }
 }

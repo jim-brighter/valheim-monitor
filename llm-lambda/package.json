@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.1109.0",
+    "@aws/bedrock-token-generator": "^1.1.0",
+    "discord-interactions": "^4.4.0",
+    "openai": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.162",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

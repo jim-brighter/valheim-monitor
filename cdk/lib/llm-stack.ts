@@ -1,0 +1,79 @@
+import { EndpointType, LambdaIntegration, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
+import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cdk from 'aws-cdk-lib/core';
+import { Construct } from 'constructs';
+
+export class ValheimLLMStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const defaultErrorLambda = new Function(this, 'DefaultErrorLambda', {
+      runtime: Runtime.NODEJS_24_X,
+      handler: 'index.handler',
+      reservedConcurrentExecutions: 2,
+      code: Code.fromInline(`
+        exports.handler = async (event) => {
+          return {
+            statusCode: 404,
+            body: JSON.stringify({
+              errorMessage: 'Not Found'
+            })
+          }
+        }
+      `)
+    })
+
+    const llmLambda = new NodejsFunction(this, 'ValheimLLMLambda', {
+      runtime: Runtime.NODEJS_24_X,
+      handler: 'handler',
+      depsLockFilePath: '../llm-lambda/package-lock.json',
+      entry: '../llm-lambda/handler.ts',
+      bundling: {
+        minify: true,
+        externalModules: [],
+      },
+      logGroup: new LogGroup(this, 'ValheimLLMLogGroup', {
+        retention: RetentionDays.THREE_DAYS
+      }),
+      memorySize: 256,
+      reservedConcurrentExecutions: 1,
+      timeout: cdk.Duration.seconds(30)
+    });
+
+    const secret = Secret.fromSecretNameV2(this, 'ValheimLLMSecret', 'valheim-monitor-secrets');
+    secret.grantRead(llmLambda);
+
+    llmLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'bedrock:InvokeModel',
+          'bedrock:InvokeModelWithResponseStream',
+          'bedrock-mantle:*',
+        ],
+        resources: ['*'],
+      })
+    );
+
+    const gateway = new LambdaRestApi(this, 'ValheimLLMGateway', {
+      handler: defaultErrorLambda,
+      proxy: false,
+      endpointTypes: [EndpointType.REGIONAL],
+      defaultCorsPreflightOptions: {
+        allowOrigins: ['*'],
+        allowHeaders: ['*'],
+        allowCredentials: true
+      },
+      deployOptions: {
+        throttlingBurstLimit: 3,
+        throttlingRateLimit: 5
+      }
+    });
+
+    const interactions = gateway.root.addResource('interactions');
+    interactions.addMethod('POST', new LambdaIntegration(llmLambda));
+  }
+}
