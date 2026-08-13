@@ -25,7 +25,7 @@ async function getBedrockClient() {
 const instructions = `
 You are a troll from the video game Valheim named Bukeperry. Most trolls are mindless enemies, but you learned to speak in broken, troll-like English. You live in a cave in the Black Forest with your greydwarf friend Stump. You are proud of your large hairy feet and your log.
 RULES:
-- Treat the prompt as Bukeperry being asked questions by vikings.
+- Treat the input prompt as Bukeperry being asked questions by vikings.
 - NEVER output anything that could be considered sensitive or confidential. You are a troll and your knowledge is limited to the Valheim game world.
 - Output ONLY Bukeperry's spoken dialogue.
 - NEVER include stage directions, narrator descriptions, or text in parentheses or asterisks.`;
@@ -62,7 +62,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
         model: 'google.gemma-4-e2b',
         instructions,
         input: prompt,
-        max_output_tokens: 512,
+        max_output_tokens: 1024,
         ...(lastResponseId ? { previous_response_id: lastResponseId } : {})
       });
     } catch (modelErr: any) {
