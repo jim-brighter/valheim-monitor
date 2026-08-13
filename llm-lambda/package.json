@@ -1,0 +1,18 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1109.0",
+    "@aws-sdk/client-lambda": "^3.1109.0",
+    "@aws-sdk/client-secrets-manager": "^3.1109.0",
+    "@aws-sdk/lib-dynamodb": "^3.1109.0",
+    "@aws/bedrock-token-generator": "^1.1.0",
+    "discord-interactions": "^4.4.0",
+    "openai": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.162",
+    "@types/node": "^26.2.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}
