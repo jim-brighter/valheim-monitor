@@ -37,7 +37,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
   }
 
-  const { id, type, token, application_id, data } = JSON.parse(event.body || '{}');
+  const { id, type, token, application_id, channel_id, data } = JSON.parse(event.body || '{}');
 
   if (type === InteractionType.PING) {
     return {
@@ -62,6 +62,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
           Payload: Buffer.from(JSON.stringify({
             token,
             applicationId: application_id,
+            channelId: channel_id,
             prompt
           }))
         }));

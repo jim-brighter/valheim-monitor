@@ -3,6 +3,7 @@ import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as cdk from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
@@ -27,6 +28,13 @@ export class ValheimLLMStack extends cdk.Stack {
       `)
     });
 
+    const stateTable = new Table(this, 'ValheimLLMStateTable', {
+      partitionKey: { name: 'channelId', type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      timeToLiveAttribute: 'ttl',
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    });
+
     const workerLambda = new NodejsFunction(this, 'ValheimLLMWorkerLambda', {
       runtime: Runtime.NODEJS_24_X,
       handler: 'handler',
@@ -40,8 +48,13 @@ export class ValheimLLMStack extends cdk.Stack {
         retention: RetentionDays.THREE_DAYS
       }),
       memorySize: 512,
-      timeout: cdk.Duration.seconds(60)
+      timeout: cdk.Duration.seconds(60),
+      environment: {
+        STATE_TABLE_NAME: stateTable.tableName
+      }
     });
+
+    stateTable.grantReadWriteData(workerLambda);
 
     workerLambda.addToRolePolicy(
       new iam.PolicyStatement({
