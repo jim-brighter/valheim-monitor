@@ -25,7 +25,34 @@ export class ValheimLLMStack extends cdk.Stack {
           }
         }
       `)
-    })
+    });
+
+    const workerLambda = new NodejsFunction(this, 'ValheimLLMWorkerLambda', {
+      runtime: Runtime.NODEJS_24_X,
+      handler: 'handler',
+      depsLockFilePath: '../llm-lambda/package-lock.json',
+      entry: '../llm-lambda/worker.ts',
+      bundling: {
+        minify: true,
+        externalModules: [],
+      },
+      logGroup: new LogGroup(this, 'ValheimLLMWorkerLogGroup', {
+        retention: RetentionDays.THREE_DAYS
+      }),
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(60)
+    });
+
+    workerLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'bedrock:InvokeModel',
+          'bedrock:InvokeModelWithResponseStream',
+          'bedrock-mantle:*',
+        ],
+        resources: ['*'],
+      })
+    );
 
     const llmLambda = new NodejsFunction(this, 'ValheimLLMLambda', {
       runtime: Runtime.NODEJS_24_X,
@@ -39,24 +66,17 @@ export class ValheimLLMStack extends cdk.Stack {
       logGroup: new LogGroup(this, 'ValheimLLMLogGroup', {
         retention: RetentionDays.THREE_DAYS
       }),
-      memorySize: 256,
       reservedConcurrentExecutions: 1,
-      timeout: cdk.Duration.seconds(30)
+      timeout: cdk.Duration.seconds(30),
+      environment: {
+        WORKER_LAMBDA_NAME: workerLambda.functionName
+      }
     });
+
+    workerLambda.grantInvoke(llmLambda);
 
     const secret = Secret.fromSecretNameV2(this, 'ValheimLLMSecret', 'valheim-monitor-secrets');
     secret.grantRead(llmLambda);
-
-    llmLambda.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: [
-          'bedrock:InvokeModel',
-          'bedrock:InvokeModelWithResponseStream',
-          'bedrock-mantle:*',
-        ],
-        resources: ['*'],
-      })
-    );
 
     const gateway = new LambdaRestApi(this, 'ValheimLLMGateway', {
       handler: defaultErrorLambda,
