@@ -29,7 +29,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   const signature = event.headers['x-signature-ed25519']!;
   const timestamp = event.headers['x-signature-timestamp']!;
-  const isValidRequest = await verifyKey(event.body, signature, timestamp, secrets.public_key);
+  const isValidRequest = await verifyKey(event.body!, signature, timestamp, secrets.public_key);
   if (!isValidRequest) {
     return {
       statusCode: 401,
