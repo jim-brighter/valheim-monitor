@@ -16,7 +16,17 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/lambda" # Location of package manifests
+    directory: "/monitor-lambda" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "jim-brighter"
+    groups:
+      all:
+        patterns:
+          - "*"
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/llm-lambda" # Location of package manifests
     schedule:
       interval: "weekly"
     assignees:
