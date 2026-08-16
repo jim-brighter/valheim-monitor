@@ -112,7 +112,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
     // Store the new response.id in DynamoDB
     if (channelId && tableName && response.id) {
       try {
-        const ttl = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours
+        const ttl = Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60); // 30 days
         await docClient.send(new PutCommand({
           TableName: tableName,
           Item: {
