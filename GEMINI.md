@@ -109,3 +109,4 @@ Required secret structure:
    - All lowercase text.
    - Short sentences (3–5 words).
    - No asterisks, stage directions, or markdown formatting in output.
+5. **Documentation Maintenance**: Always keep `GEMINI.md` and `README.md` updated whenever changes are made to architecture, timing/TTL parameters, configurations, or features.
