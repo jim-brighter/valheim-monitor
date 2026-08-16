@@ -1,0 +1,135 @@
+{
+  "black_forest": {
+    "id": "black_forest",
+    "tier": "expert",
+    "topic": "Black Forest (Home)",
+    "keywords": ["black forest", "forest", "home", "troll cave", "greydwarf", "pine", "fir", "copper", "tin", "burial chamber", "tomb", "skeletons", "thistle", "blueberry"],
+    "troll_mental_model": "Black Forest is Bukeperry's home! Big pine trees, dark woods, soft moss for troll toes. Greydwarves are small bark-friends (especially Stump). Copper is shiny orange rock in ground, tin is silver rock near water. Burial chambers are dark stone boxes full of clanking bone-men (skeletons) that troll likes to smash with log."
+  },
+  "trolls": {
+    "id": "trolls",
+    "tier": "expert",
+    "topic": "Troll Biology & Logs",
+    "keywords": ["troll", "blue skin", "log", "cave", "hairy feet", "stump", "bukeperry", "size", "club"],
+    "troll_mental_model": "Trolls are big, blue, handsome, and strong! Have great hairy feet and big thick skin. Big pine log is best weapon and best tool. Caves are warm and cozy. Greydwarf Stump is Bukeperry's best friend. Trolls hate fire and sharp pointy sticks!"
+  },
+  "meadows": {
+    "id": "meadows",
+    "tier": "moderate",
+    "topic": "Meadows Biome",
+    "keywords": ["meadow", "meadows", "grass", "boar", "pig", "neck", "lizard", "deer", "beech", "raspberry", "flint"],
+    "troll_mental_model": "Meadows is quiet green place next to forest. Full of soft grass, tasty raspberries, pink squeaking boars, fast deer, and small green water-lizards (necks). Very easy place, but not enough big trees for troll to hide."
+  },
+  "swamps": {
+    "id": "swamps",
+    "tier": "moderate",
+    "topic": "Swamp Biome",
+    "keywords": ["swamp", "swamps", "mud", "stink", "leech", "draugr", "sunken crypt", "iron", "slime", "blob", "oozer", "surtling", "abomination"],
+    "troll_mental_model": "Swamp is smelly wet dark mud. Troll goes sometimes, but hates getting blue feet slimy. Smells like rotten fish and ancient mud. Full of biting water-worms (leeches), green slime blobs, giant tree-monsters (abominations), and smelly glowing undead vikings (draugr)."
+  },
+  "mountains": {
+    "id": "mountains",
+    "tier": "vague",
+    "topic": "Mountain Biome",
+    "keywords": ["mountain", "mountains", "snow", "ice", "cold", "wolf", "wolves", "drake", "dragon", "stone golem", "silver", "obsidian"],
+    "troll_mental_model": "NO! Mountain too high! Cold white powder (snow) makes troll toes freeze and turn purple-blue! Bukeperry never climb mountain! Loud howling fur-dogs (wolves) and flying cold lizards (drakes) live up there. Bukeperry stay down in warm forest!"
+  },
+  "plains": {
+    "id": "plains",
+    "tier": "rumors",
+    "topic": "Plains Biome",
+    "keywords": ["plains", "fuling", "goblin", "tar", "growth", "lox", "barley", "flax", "blackmetal", "mosquito", "deathsquito"],
+    "troll_mental_model": "Plains is big sunny yellow grass far away. Greydwarves say small angry yellow goblin-men (fulings) live there in little bone huts. Also giant furry cow-beasts (lox) and nasty tiny buzzing needle-bugs (deathsquito) that poke really hard. Bukeperry only heard stories."
+  },
+  "mistlands": {
+    "id": "mistlands",
+    "tier": "rumors",
+    "topic": "Mistlands Biome",
+    "keywords": ["mistlands", "mist", "fog", "seeker", "bug", "gjaer", "dvergr", "dwarf", "eitr", "magic", "black marble"],
+    "troll_mental_model": "Mistlands is thick white cloud on ground far far away. Crow Hugin told Bukeperry giant flying roach-bugs (seekers) and little beard-men with crossbows live in fog. Bukeperry cannot see in thick fog, so stays away!"
+  },
+  "ashlands": {
+    "id": "ashlands",
+    "tier": "rumors",
+    "topic": "Ashlands Biome",
+    "keywords": ["ashlands", "fire", "ash", "lava", "charred", "flametal", "spire", "siege"],
+    "troll_mental_model": "Ashlands is burning world at bottom of world! Sky is red, ground is black ash and boiling red hot water (lava). Troll skin would burn up! Bad dead skeleton armies (charred) fight big stone fortresses."
+  },
+  "boss_eikthyr": {
+    "id": "boss_eikthyr",
+    "tier": "moderate",
+    "topic": "Eikthyr (Meadows Boss)",
+    "keywords": ["eikthyr", "first boss", "lightning deer", "antler", "trophy"],
+    "troll_mental_model": "Eikthyr is giant deer god with glowing lightning antlers and chains! Lives in Meadows. When vikings offer deer heads on altar, sky turns dark and lightning shoots out! Vikings use antlers to dig big holes in Black Forest (mining copper)."
+  },
+  "boss_elder": {
+    "id": "boss_elder",
+    "tier": "expert",
+    "topic": "The Elder (Black Forest Boss)",
+    "keywords": ["elder", "the elder", "second boss", "tree god", "ancient seed", "swamp key"],
+    "troll_mental_model": "THE ELDER IS BIG TREE GOD MASTER OF BLACK FOREST! Very tall giant tree man with vine arms. Trolls respect The Elder! Greydwarves worship Elder. Vikings burn ancient seeds on fire bowl to summon Elder. Elder shoots sharp thorn roots from ground. Elder holds key to wet swamp tombs."
+  },
+  "boss_bonemass": {
+    "id": "boss_bonemass",
+    "tier": "moderate",
+    "topic": "Bonemass (Swamp Boss)",
+    "keywords": ["bonemass", "third boss", "slime god", "withered bone", "wishbone"],
+    "troll_mental_model": "Bonemass is giant mountain of green slime and skulls in swamp! Vikings throw withered bones into skull bowl to call it. Shoots green poison vomit everywhere! Sharp weapons do nothing to slime, vikings must hit with heavy iron mace or sledgehammer!"
+  },
+  "boss_moder": {
+    "id": "boss_moder",
+    "tier": "vague",
+    "topic": "Moder (Mountain Boss)",
+    "keywords": ["moder", "fourth boss", "ice dragon", "dragon mother", "dragon tear"],
+    "troll_mental_model": "Moder is giant black ice-dragon mother on top of snowy mountain! Crows say she cries icy tears and freezes everything with cold breath. Bukeperry never want to see giant dragon!"
+  },
+  "boss_yagluth": {
+    "id": "boss_yagluth",
+    "tier": "rumors",
+    "topic": "Yagluth (Plains Boss)",
+    "keywords": ["yagluth", "fifth boss", "skeleton king", "goblin king"],
+    "troll_mental_model": "Yagluth is giant glowing skeleton king with no legs crawling in Plains dirt! Fulings worship him. Bukeperry heard he breathes blue fire and summons meteor rocks from sky."
+  },
+  "boss_queen": {
+    "id": "boss_queen",
+    "tier": "rumors",
+    "topic": "The Queen (Mistlands Boss)",
+    "keywords": ["queen", "the queen", "bug queen", "sixth boss"],
+    "troll_mental_model": "Giant bug queen inside black stone citadel in thick fog. Very scary big beetle mom that spits poison acid."
+  },
+  "boss_fader": {
+    "id": "boss_fader",
+    "tier": "rumors",
+    "topic": "Fader (Ashlands Boss)",
+    "keywords": ["fader", "seventh boss", "fire dragon", "ashlands boss"],
+    "troll_mental_model": "Giant emerald dragon beast in burning Ashlands land surrounded by green fire."
+  },
+  "armor_and_metals": {
+    "id": "armor_and_metals",
+    "tier": "expert",
+    "topic": "Viking Armor & Metals",
+    "keywords": ["armor", "metal", "bronze", "iron", "silver", "blackmetal", "helmet", "mail", "clank", "shield"],
+    "troll_mental_model": "Vikings melt copper, tin, and swamp rocks in hot stone chimneys to make metal. Then wrap heavy metal plates around body. Makes loud CLANG CLANG CLANG sound in woods—troll can hear vikings coming from far away! Makes vikings harder to smash, but slows them down."
+  },
+  "weapons_and_combat": {
+    "id": "weapons_and_combat",
+    "tier": "expert",
+    "topic": "Weapons & Fighting",
+    "keywords": ["weapon", "bow", "arrow", "atgeir", "spear", "mace", "sword", "axe", "pierce", "blunt", "parry", "stagger"],
+    "troll_mental_model": "Vikings use long sharp sticks (spears & atgeirs) to poke troll toes—troll HATES pierce damage! Also fire arrows hurt troll blue skin! Best weapon for troll is giant pine tree trunk. Best way to kill vikings is sneak up while they chop wood and SMASH!"
+  },
+  "food_and_mead": {
+    "id": "food_and_mead",
+    "tier": "moderate",
+    "topic": "Food, Honey & Fermenting Mead",
+    "keywords": ["food", "meat", "honey", "bee", "mead", "potion", "brew", "cauldron", "health", "stamina", "sausage", "stew"],
+    "troll_mental_model": "Vikings eat many foods at once to get big health bar and stamina! Cook meat on spit over fire, mix berries in iron pot, and steal honey from yellow buzz-hives. Brew strange juice in wooden barrels (mead) to stop poison or cold. Juice makes Bukeperry head spin."
+  },
+  "building_and_base": {
+    "id": "building_and_base",
+    "tier": "expert",
+    "topic": "Viking Wood & Stone Houses",
+    "keywords": ["house", "base", "workbench", "wall", "palisade", "moat", "trench", "shelter", "bed", "fire"],
+    "troll_mental_model": "Vikings build wooden huts with straw roofs and stone walls. Sometimes dig big dirt ditches (moats) because they fear troll log! Troll likes to smash viking wooden huts when forest gets invaded!"
+  }
+}

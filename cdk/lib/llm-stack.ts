@@ -50,7 +50,8 @@ export class ValheimLLMStack extends cdk.Stack {
       memorySize: 512,
       timeout: cdk.Duration.seconds(60),
       environment: {
-        STATE_TABLE_NAME: stateTable.tableName
+        STATE_TABLE_NAME: stateTable.tableName,
+        BEDROCK_MODEL_ID: process.env.BEDROCK_MODEL_ID || 'google.gemma-4-31b'
       }
     });
 
