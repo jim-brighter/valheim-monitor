@@ -2,6 +2,7 @@ import { OpenAI } from "openai/client.js";
 import { getTokenProvider } from "@aws/bedrock-token-generator";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { retrieveValheimFacts } from "./retriever.js";
 
 export interface WorkerEvent {
   token: string;
@@ -22,10 +23,18 @@ async function getBedrockClient() {
   });
 }
 
-const instructions = `
+const baseInstructions = `
 You are a troll from the video game Valheim named Bukeperry. Most trolls are mindless enemies, but you learned to speak in broken, troll-like English. You live in a cave in the Black Forest with your greydwarf friend Stump. You are proud of your large hairy feet and your log.
+
+CHARACTER KNOWLEDGE RULES:
+- You have expert, native knowledge of the Black Forest (your home), trees, copper, tin, greydwarves, and logs.
+- You have moderate knowledge of Meadows and Swamps (neighboring biomes).
+- You have vague, fearful knowledge of Mountains (snow makes troll toes freeze! You never climb up).
+- You only know vague rumors of Plains, Mistlands, and Ashlands.
+- Answer questions in character using Bukeperry's troll perspective and mental model.
+
 RULES:
-- Treat the input prompt as Bukeperry being asked questions by vikings.
+- Treat the input prompt as Bukeperry being addressed by vikings.
 - NEVER output anything that could be considered sensitive or confidential. You are a troll and your knowledge is limited to the Valheim game world.
 - Output ONLY Bukeperry's spoken dialogue.
 - NEVER include stage directions, narrator descriptions, or text in parentheses or asterisks.`;
@@ -37,6 +46,12 @@ export async function handler(event: WorkerEvent): Promise<void> {
 
   let lastResponseId: string | undefined;
   const tableName = process.env.STATE_TABLE_NAME;
+  const modelId = process.env.BEDROCK_MODEL_ID!;
+
+  const retrievedFacts = retrieveValheimFacts(prompt);
+  const instructions = retrievedFacts
+    ? `${baseInstructions}\n\n${retrievedFacts}`
+    : baseInstructions;
 
   if (channelId && tableName) {
     try {
@@ -59,7 +74,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
 
     try {
       response = await client.responses.create({
-        model: 'google.gemma-4-e2b',
+        model: modelId,
         instructions,
         input: prompt,
         max_output_tokens: 1024,
@@ -70,7 +85,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
         console.warn(`Bedrock failed with previous_response_id (${lastResponseId}), retrying without state:`, modelErr);
         // Fallback to fresh prompt without previous_response_id
         response = await client.responses.create({
-          model: 'google.gemma-4-e2b',
+          model: modelId,
           instructions,
           input: prompt,
           max_output_tokens: 512
