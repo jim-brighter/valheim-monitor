@@ -77,7 +77,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
         model: modelId,
         instructions,
         input: prompt,
-        max_output_tokens: 1024,
+        max_output_tokens: 512,
         ...(lastResponseId ? { previous_response_id: lastResponseId } : {})
       });
     } catch (modelErr: any) {
