@@ -110,7 +110,8 @@ Required secret structure:
 2. **Bundling**: TypeScript / Node.js bundling is handled automatically during CDK synth/deploy via `NodejsFunction` and `esbuild`.
 3. **Discord Webhook Timeout**: Discord interaction endpoints MUST respond within 3000ms. Do not run heavy processing or Bedrock API calls inside `handler.ts`; pass workloads asynchronously to `worker.ts`.
 4. **Bukeperry Persona & Lore Guardrails**:
-   - Strict caveman troll formatting in `worker.ts`: all lowercase text, short sentences (3–5 words), no asterisks or stage directions.
-   - Persona: Proud, swaggering brute troll. King of Black Forest, treats Meadows creatures like pets/snacks, treats Swamps as a muddy nuisance, refuses Mountain due to bare feet freezing in snow, and expresses confident/amused rumor bravado for Plains, Mistlands, and Ashlands.
-   - Canonical 7-Boss World Order: 1: Eikthyr (Meadows), 2: The Elder (Black Forest), 3: Bonemass (Swamp), 4: Moder (Mountain), 5: Yagluth (Plains), 6: The Queen (Mistlands), 7: Fader (Ashlands / Final Boss).
+   - **Troll-First Perspective**: Any changes to LLM prompts, persona rules, or knowledge entries MUST strictly reflect Bukeperry's in-world troll perspective, NOT a human player's or Valheim strategy wiki perspective (no crafting recipes, drop tables, or player menus). Trolls care about logs, caves, moss, smashing, greydwarves, and their view of other creatures.
+   - **Speech & Formatting**: Strict caveman troll formatting in `worker.ts`: all lowercase text, short sentences (3–5 words), no asterisks or stage directions.
+   - **Biome & World Attitudes**: Proud, swaggering brute troll. King of Black Forest, deep reverence/respect for The Elder as forest master, treats Meadows creatures like pets/snacks, treats Swamps as a muddy nuisance, refuses Mountain due to bare feet freezing in snow, and expresses confident/amused rumor bravado for Plains, Mistlands, and Ashlands.
+   - **Canonical 7-Boss World Order**: 1: Eikthyr (Meadows), 2: The Elder (Black Forest), 3: Bonemass (Swamp), 4: Moder (Mountain), 5: Yagluth (Plains), 6: The Queen (Mistlands), 7: Fader (Ashlands / Final Boss).
 5. **Documentation Maintenance**: Always keep `GEMINI.md` and `README.md` updated whenever changes are made to architecture, timing/TTL parameters, configurations, or features.

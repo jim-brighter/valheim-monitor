@@ -2,12 +2,20 @@ import { describe, it, expect } from 'vitest';
 import { retrieveValheimFacts } from './retriever.js';
 
 describe('retriever', () => {
-  it('retrieves expert Black Forest facts for forest and copper mining queries', () => {
-    const facts = retrieveValheimFacts('Tell me about the black forest, copper, and tin');
+  it('retrieves expert Black Forest home facts from troll perspective', () => {
+    const facts = retrieveValheimFacts('Tell me about the black forest, copper, and stump');
     expect(facts).toContain('EXPERT KNOWLEDGE');
-    expect(facts).toContain('black forest is home');
-    expect(facts).toContain('copper is big dome rock');
-    expect(facts).toContain('tin is shiny rock on water edge');
+    expect(facts).toContain('black forest is home sweet home');
+    expect(facts).toContain('stump is best buddy');
+    expect(facts).toContain('pine trees make best swinging logs');
+  });
+
+  it('retrieves deep respect for The Elder as forest master', () => {
+    const facts = retrieveValheimFacts('What do you think of the Elder?');
+    expect(facts).toContain('EXPERT KNOWLEDGE');
+    expect(facts).toContain('The Elder (Black Forest Boss #2 / Forest Master)');
+    expect(facts).toContain('bukeperry have huge respect for the elder');
+    expect(facts).toContain('troll bow head to elder');
   });
 
   it('retrieves Meadows as an easy playground where creatures are like pets/snacks', () => {
@@ -17,32 +25,33 @@ describe('retriever', () => {
     expect(facts).toContain('pets or crunchy snacks');
   });
 
-  it('retrieves full 7-boss progression when asked about boss order or final boss', () => {
+  it('retrieves full 7-boss progression in troll lore terms', () => {
     const facts = retrieveValheimFacts('What is the progression and who is the final boss?');
     expect(facts).toContain('World Biome & Boss Progression (1 to 7)');
-    expect(facts).toContain('seven lands in valheim in exact order');
+    expect(facts).toContain('seven big lands in valheim in order');
     expect(facts).toContain('1 is meadows with eikthyr');
+    expect(facts).toContain('2 is black forest with the elder');
     expect(facts).toContain('5 is plains with yagluth');
     expect(facts).toContain('6 is mistlands with the queen');
     expect(facts).toContain('7 is ashlands with fader');
-    expect(facts).toContain('fader is current final boss');
+    expect(facts).toContain('fader is current final beast');
   });
 
   it('retrieves accurate Plains boss info for Yagluth without mistlands confusion', () => {
     const facts = retrieveValheimFacts('Where do I fight Yagluth?');
     expect(facts).toContain('Yagluth (Plains Boss #5)');
     expect(facts).toContain('yagluth is in plains not mistlands');
-    expect(facts).toContain('fifth boss in plains');
+    expect(facts).toContain('fifth big beast in plains');
   });
 
   it('retrieves vague mountain facts explaining bare feet freezing refusal', () => {
     const facts = retrieveValheimFacts('Why are there no trolls on the snowy mountain?');
     expect(facts).toContain('VAGUE KNOWLEDGE');
-    expect(facts).toContain('freezes bare troll toes');
-    expect(facts).toContain('bukeperry strictly refuses to climb up');
+    expect(facts).toContain('snow freezes bare troll toes instantly');
+    expect(facts).toContain('strictly refuse to go up');
   });
 
-  it('retrieves swamp facts as a soggy nuisance', () => {
+  it('retrieves swamp facts as a soggy gross nuisance', () => {
     const facts = retrieveValheimFacts('What is in the swamp?');
     expect(facts).toContain('MODERATE KNOWLEDGE');
     expect(facts).toContain('Swamps (Smelly Soggy Nuisance)');
@@ -51,10 +60,16 @@ describe('retriever', () => {
 
   it('retrieves Haldor merchant info with protective bubble and lox Halstein', () => {
     const facts = retrieveValheimFacts('How do I find Haldor the merchant?');
-    expect(facts).toContain('Merchants (Haldor & Hildir)');
-    expect(facts).toContain('protective dome rune shield');
+    expect(facts).toContain('Haldor the Merchant & Halstein');
+    expect(facts).toContain('magic glowing blue bubble shield');
     expect(facts).toContain('halstein');
-    expect(facts).toContain('megingjord');
+  });
+
+  it('retrieves troll perspective on vikings and their huts', () => {
+    const facts = retrieveValheimFacts('What do you think of vikings and their base?');
+    expect(facts).toContain('Vikings, Weapons & Huts');
+    expect(facts).toContain('tiny, loud, annoying creatures');
+    expect(facts).toContain('smash viking huts with log');
   });
 
   it('returns empty string if no keywords match', () => {
