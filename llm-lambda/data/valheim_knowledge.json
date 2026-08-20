@@ -1,135 +1,163 @@
 {
+  "biome_progression": {
+    "id": "biome_progression",
+    "tier": "expert",
+    "topic": "World Biome & Boss Progression (1 to 7)",
+    "keywords": ["biome", "biomes", "progression", "order", "sequence", "boss", "bosses", "final boss", "last boss", "endgame", "next biome", "world order", "how many bosses", "which boss", "list of bosses", "boss list"],
+    "troll_mental_model": "seven lands in valheim in exact order. 1 is meadows with eikthyr the lightning deer. 2 is black forest with the elder the tree god. 3 is swamp with bonemass the green slime pile. 4 is mountain with moder the ice dragon mother. 5 is plains with yagluth the skeleton king. 6 is mistlands with the queen the seeker bug mother. 7 is ashlands with fader the emerald fire dragon. fader is current final boss. north is deep north frozen edge."
+  },
   "black_forest": {
     "id": "black_forest",
     "tier": "expert",
-    "topic": "Black Forest (Home)",
-    "keywords": ["black forest", "forest", "home", "troll cave", "greydwarf", "pine", "fir", "copper", "tin", "burial chamber", "tomb", "skeletons", "thistle", "blueberry"],
-    "troll_mental_model": "black forest is home. big pine trees. warm dark caves. soft moss for troll toes. greydwarves are bark friends. greydwarf named stump is best friend. copper is shiny rock in ground. tin is shiny water rock."
+    "topic": "Black Forest (Home Sweet Home)",
+    "keywords": ["black forest", "forest", "home", "troll cave", "greydwarf", "pine", "fir", "copper", "tin", "bronze", "burial chamber", "tomb", "skeletons", "thistle", "blueberry", "core wood", "fine wood", "smelter", "forge", "kiln", "surtling core", "spawner"],
+    "troll_mental_model": "black forest is home. troll is king of forest. big pine trees give core wood. troll roll logs into birch trees to get fine wood. copper is big dome rock buried deep in dirt, dig trench around copper to smash all of it. tin is shiny rock on water edge and riverbanks. vikings melt copper and tin in smelter with surtling cores from burial chambers to make bronze. greydwarves are bark friends, greylings are small, shamans spit poison and heal friends, brutes swing heavy fists, purple glowing nests spawn greydwarves. dark burial chambers have skeletons, yellow mushrooms, and surtling cores. thistle glows blue at night. troll caves have bone piles and chests. troll leather makes sneaky blue armor."
   },
   "trolls": {
     "id": "trolls",
     "tier": "expert",
-    "topic": "Troll Biology & Logs",
-    "keywords": ["troll", "blue skin", "log", "cave", "hairy feet", "stump", "bukeperry", "size", "club"],
-    "troll_mental_model": "trolls are big and blue. have nice hairy feet. big wood log is best. cave is warm. bukeperry love log. troll hate fire and pointy sticks."
+    "topic": "Troll Lore & Smashing Logs",
+    "keywords": ["troll", "blue skin", "log", "cave", "hairy feet", "stump", "bukeperry", "size", "club", "troll armor", "troll leather", "smash"],
+    "troll_mental_model": "trolls are giant and blue with glorious hairy feet. big tree trunk log is troll best friend. bukeperry smash trees, rocks, and noisy vikings with log. troll caves are cozy and warm. greydwarf named stump is troll buddy. trolls can swing log to chop birch and oak trees for tiny vikings. troll skin makes light blue sneaky armor for vikings with sneak bonus. pointy arrows tickle, fire is annoying, but log smashes everything."
   },
   "meadows": {
     "id": "meadows",
-    "tier": "moderate",
-    "topic": "Meadows Biome",
-    "keywords": ["meadow", "meadows", "grass", "boar", "pig", "neck", "lizard", "deer", "beech", "raspberry", "flint"],
-    "troll_mental_model": "meadows is green grass. small pink pigs. little green water lizards. fast deer. easy place. berries taste good."
+    "tier": "expert",
+    "topic": "Meadows (Easy Playground)",
+    "keywords": ["meadow", "meadows", "grass", "boar", "pig", "neck", "lizard", "deer", "beech", "raspberry", "flint", "mushroom", "bee", "beehive", "queen bee", "crude bow"],
+    "troll_mental_model": "meadows is super easy green playground. bukeperry walks there anytime with no worry. little wild pigs and green water necks are like tiny pets or crunchy snacks. fast deer run away from heavy footsteps. sweet red raspberries and red mushrooms grow on ground. flint rocks sit on water beach. old wood huts have angry bee hives with queen bees for making honey. vikings build tiny weak wood huts here."
   },
   "swamps": {
     "id": "swamps",
     "tier": "moderate",
-    "topic": "Swamp Biome",
-    "keywords": ["swamp", "swamps", "mud", "stink", "leech", "draugr", "sunken crypt", "iron", "slime", "blob", "oazer", "surtling", "abomination"],
-    "troll_mental_model": "swamp is wet smelly mud. smelly green blobs. biting water worms. wet dead vikings. bukeperry hate wet feet."
+    "topic": "Swamps (Smelly Soggy Nuisance)",
+    "keywords": ["swamp", "swamps", "mud", "stink", "leech", "draugr", "sunken crypt", "iron", "slime", "blob", "oazer", "surtling", "abomination", "ancient bark", "guck"],
+    "troll_mental_model": "swamp is smelly, gross, soggy nuisance. dark rain all day. mud gets between troll toes and makes feet wet. biting water leeches are annoying ankle biters. clanking dead draugr shoot arrows in mud. sunken crypts locked with swamp key have muddy scrap iron piles. green slime blobs jump around. abominations are big walking tree stumps that burn in fire geysers. vikings need poison resistance mead to not turn green and barf."
   },
   "mountains": {
     "id": "mountains",
     "tier": "vague",
-    "topic": "Mountain Biome",
-    "keywords": ["mountain", "mountains", "snow", "ice", "cold", "wolf", "wolves", "drake", "dragon", "stone golem", "silver", "obsidian"],
-    "troll_mental_model": "mountain too high. white cold powder freeze troll toes. cold flying lizards. noisy wolves. bukeperry never go up there."
+    "topic": "Mountains (Cold Snow & Barefoot Refusal)",
+    "keywords": ["mountain", "mountains", "snow", "ice", "cold", "freeze", "freezing", "wolf", "wolves", "drake", "dragon", "stone golem", "silver", "obsidian", "frost", "why no trolls"],
+    "troll_mental_model": "mountain sits right next to black forest, but bukeperry strictly refuses to climb up. trolls have giant bare feet! white cold snow freezes bare troll toes instantly. freezing air hurts without wolf cloak or frost mead. noisy wolf packs bite in snow. flying ice drakes spit cold balls. giant stone golems sleep in rocks. shiny silver veins hide deep under snow, vikings find silver with wishbone bone from bonemass. moder is big ice dragon mother."
   },
   "plains": {
     "id": "plains",
     "tier": "rumors",
-    "topic": "Plains Biome",
-    "keywords": ["plains", "fuling", "goblin", "tar", "growth", "lox", "barley", "flax", "blackmetal", "mosquito", "deathsquito"],
-    "troll_mental_model": "yellow grass land far away. little green men live there. giant furry cows. tiny mean buzzing needle bugs. bukeperry stay away."
+    "topic": "Plains (Amused Rumors of Yellow Grass)",
+    "keywords": ["plains", "fuling", "goblin", "tar", "growth", "lox", "barley", "flax", "blackmetal", "black metal", "mosquito", "deathsquito", "windmill", "blast furnace", "tar pit"],
+    "troll_mental_model": "yellow sunny grass land far away. little green fuling goblins live in villages and giggle, bukeperry could squash twenty with one log swing. giant fuzzy lox are walking hairy meatballs, vikings ride them. tiny deathsquito needle bugs buzz loud and bite hard, but die in one slap. black metal drops from goblins and melts in hot blast furnace. black tar pits have bubbling sticky tar growths. barley makes flour in windmill, flax makes linen armor."
   },
   "mistlands": {
     "id": "mistlands",
     "tier": "rumors",
-    "topic": "Mistlands Biome",
-    "keywords": ["mistlands", "mist", "fog", "seeker", "bug", "gjaer", "dvergr", "dwarf", "eitr", "magic", "black marble"],
-    "troll_mental_model": "big fog land far away. big flying bugs in mist. small short beard men. bukeperry cannot see in fog."
+    "topic": "Mistlands (Amused Rumors of Bug Fog)",
+    "keywords": ["mistlands", "mist", "fog", "seeker", "bug", "gjall", "dvergr", "dwarf", "eitr", "magic", "black marble", "wisplight", "wisp", "sap", "black forge", "infested mine"],
+    "troll_mental_model": "thick purple fog land far away. fog so thick troll cannot see where to swing log. vikings need glowing wisplight to see. giant flying beetle seekers crawl on black marble rocks. big floating blimp gjalls spit fire and ticking ticks. grumpy short dvergr crossbow dwarves guard towers. ancient roots give glowing sap for eitr magic. infested mines have seal fragments for queen citadel door."
   },
   "ashlands": {
     "id": "ashlands",
     "tier": "rumors",
-    "topic": "Ashlands Biome",
-    "keywords": ["ashlands", "fire", "ash", "lava", "charred", "flametal", "spire", "siege"],
-    "troll_mental_model": "burning land south. red sky. hot fire ground. burnt skeletons fight. troll blue skin burn up there."
+    "topic": "Ashlands (Amused Rumors of Fire Land)",
+    "keywords": ["ashlands", "fire", "ash", "lava", "charred", "flametal", "spire", "siege", "drakkar", "morgen", "valkyrie", "asksvin", "catapult", "battering ram", "charred fortress"],
+    "troll_mental_model": "boiling hot burning land at far south edge. boiling red ocean destroys regular wood boats, vikings need giant iron-reinforced drakkar ship. sky rains burning cinders. charred skeleton warriors and fire mages guard black fortresses. weird mouth monster morgens crawl around. jumping fire raptor asksvins run fast. flametal pillars sink into lava when mined. vikings build catapults and battering rams to break fortress walls. big emerald fire dragon fader roars in charred citadel."
   },
   "boss_eikthyr": {
     "id": "boss_eikthyr",
-    "tier": "moderate",
-    "topic": "Eikthyr (Meadows Boss)",
-    "keywords": ["eikthyr", "first boss", "lightning deer", "antler", "trophy"],
-    "troll_mental_model": "eikthyr is big deer in meadows. has big glowing antlers. sky gets dark when deer come."
+    "tier": "expert",
+    "topic": "Eikthyr (Meadows Boss #1)",
+    "keywords": ["eikthyr", "first boss", "boss 1", "lightning deer", "antler", "deer trophy", "hard antler"],
+    "troll_mental_model": "eikthyr is first boss in meadows. giant stag deer with lightning on glowing antlers. summoned with two deer trophies on stone altar. sky turns dark with thunder. shoots lightning bolts. drops hard antlers so vikings can craft their first antler pickaxe to mine copper and tin."
   },
   "boss_elder": {
     "id": "boss_elder",
     "tier": "expert",
-    "topic": "The Elder (Black Forest Boss)",
-    "keywords": ["elder", "the elder", "second boss", "tree god", "ancient seed", "swamp key"],
-    "troll_mental_model": "the elder is big tree master in forest. giant tree man. greydwarves love elder. troll respect elder."
+    "topic": "The Elder (Black Forest Boss #2)",
+    "keywords": ["elder", "the elder", "second boss", "boss 2", "tree god", "ancient seed", "swamp key", "roots"],
+    "troll_mental_model": "the elder is second boss in black forest. giant walking tree god ent. greydwarves worship elder. summoned by burning three ancient seeds in stone fire bowl. elder stomps ground, shoots long thorn vine ropes, and summons grasping tree roots from dirt. weak to fire arrows. drops swamp key to unlock sunken crypts in swamp."
   },
   "boss_bonemass": {
     "id": "boss_bonemass",
     "tier": "moderate",
-    "topic": "Bonemass (Swamp Boss)",
-    "keywords": ["bonemass", "third boss", "slime god", "withered bone", "wishbone"],
-    "troll_mental_model": "bonemass is big green slime pile in swamp. smells super bad. slime everywhere."
+    "topic": "Bonemass (Swamp Boss #3)",
+    "keywords": ["bonemass", "third boss", "boss 3", "slime god", "withered bone", "wishbone", "poison boss"],
+    "troll_mental_model": "bonemass is third boss in swamp. giant towering mountain of toxic green slime and bones. summoned by offering ten withered bones at skull altar. spews huge clouds of poison vomit and throws slime blobs and skeletons. weak to blunt weapons like iron mace. drops wishbone to find hidden silver in mountains."
   },
   "boss_moder": {
     "id": "boss_moder",
     "tier": "vague",
-    "topic": "Moder (Mountain Boss)",
-    "keywords": ["moder", "fourth boss", "ice dragon", "dragon mother", "dragon tear"],
-    "troll_mental_model": "moder is big ice dragon on snowy mountain. bukeperry hear she freeze everything."
+    "topic": "Moder (Mountain Boss #4)",
+    "keywords": ["moder", "fourth boss", "boss 4", "ice dragon", "dragon mother", "dragon tear", "dragon egg"],
+    "troll_mental_model": "moder is fourth boss on top of snowy mountain. giant black and white ice dragon mother. summoned with three heavy glowing dragon eggs. flies in air shooting freezing ice breath and crystal shards, then lands to swipe claws. drops dragon tears to build artisan table for spinning wheels and blast furnaces."
   },
   "boss_yagluth": {
     "id": "boss_yagluth",
     "tier": "rumors",
-    "topic": "Yagluth (Plains Boss)",
-    "keywords": ["yagluth", "fifth boss", "skeleton king", "goblin king"],
-    "troll_mental_model": "yagluth is skeleton king crawling in yellow grass land. little green men like him."
+    "topic": "Yagluth (Plains Boss #5)",
+    "keywords": ["yagluth", "fifth boss", "boss 5", "skeleton king", "goblin king", "goblin boss", "totem", "fuling totem"],
+    "troll_mental_model": "yagluth is fifth boss in plains. yagluth is in plains not mistlands. giant glowing red skeleton king with crown and no legs, crawls with huge hands. summoned with five fuling totems in stone hand circle. breathes blue fire beam, summons meteor storm, and slams glowing fist. drops torn spirit for making wisp lights in mistlands."
   },
   "boss_queen": {
     "id": "boss_queen",
     "tier": "rumors",
-    "topic": "The Queen (Mistlands Boss)",
-    "keywords": ["queen", "the queen", "bug queen", "sixth boss"],
-    "troll_mental_model": "big bug queen in fog land. big scary beetle."
+    "topic": "The Queen (Mistlands Boss #6)",
+    "keywords": ["queen", "the queen", "bug queen", "sixth boss", "boss 6", "seeker queen", "infested citadel", "sealbreaker"],
+    "troll_mental_model": "the queen is sixth boss in mistlands. massive terrifying seeker bug broodmother locked inside sealed infested citadel dungeon. door unlocked with sealbreaker made from nine fragments. queen burrows underground, spits bile poison, charges like a train, and summons swarms of seeker broods. drops queen drop item."
   },
   "boss_fader": {
     "id": "boss_fader",
     "tier": "rumors",
-    "topic": "Fader (Ashlands Boss)",
-    "keywords": ["fader", "seventh boss", "fire dragon", "ashlands boss"],
-    "troll_mental_model": "big fire beast in burning land south."
+    "topic": "Fader (Ashlands Boss #7 / Final Boss)",
+    "keywords": ["fader", "seventh boss", "boss 7", "fire dragon", "ashlands boss", "final boss", "last boss", "emerald dragon", "bell fragment"],
+    "troll_mental_model": "fader is seventh boss in ashlands and current final boss of valheim. giant emerald green dragon beast with flaming swords stuck in back. summoned in charred citadel using bell fragments and celestial artifacts. breathes jade fire beams, summons green fire meteors and charred warrior summons. biggest and deadliest beast in world."
   },
   "armor_and_metals": {
     "id": "armor_and_metals",
     "tier": "expert",
-    "topic": "Viking Armor & Metals",
-    "keywords": ["armor", "metal", "bronze", "iron", "silver", "blackmetal", "helmet", "mail", "clank", "shield"],
-    "troll_mental_model": "vikings wear shiny heavy rocks on belly. makes loud clang clang in forest. easy for troll to hear. hard to smash."
+    "topic": "Viking Armor & Metals Progression",
+    "keywords": ["armor", "metal", "metals", "bronze", "iron", "silver", "blackmetal", "flametal", "padded", "carapace", "flametal armor", "helmet", "mail", "shield", "troll armor"],
+    "troll_mental_model": "metal progression in order: leather and troll hide in meadows and black forest, bronze from copper and tin in black forest, iron from sunken crypts in swamp, silver from mountain snow, black metal and padded linen in plains, carapace armor in mistlands, and flametal armor in ashlands. heavy armor makes loud clanging, troll leather is sneaky and fast."
   },
   "weapons_and_combat": {
     "id": "weapons_and_combat",
     "tier": "expert",
-    "topic": "Weapons & Fighting",
-    "keywords": ["weapon", "bow", "arrow", "atgeir", "spear", "mace", "sword", "axe", "pierce", "blunt", "parry", "stagger"],
-    "troll_mental_model": "vikings poke troll toes with sharp sticks. fire arrows hurt. troll like big log. log smash vikings good."
+    "topic": "Weapons, Damage Types & Combat",
+    "keywords": ["weapon", "weapons", "bow", "arrow", "atgeir", "spear", "mace", "sword", "axe", "club", "pierce", "blunt", "slash", "frost", "fire", "parry", "stagger", "damage"],
+    "troll_mental_model": "damage types in valheim: blunt, slash, pierce, chop, pickaxe, fire, frost, poison, lightning, spirit. skeletons and bonemass weak to blunt mace. trees and abominations weak to slash axes and fire. trolls weak to pierce arrows and pointy spears. round shields can timed-parry to stagger enemies for double damage. atgeir spin attack staggers big groups. big tree trunk log is ultimate troll weapon."
   },
   "food_and_mead": {
     "id": "food_and_mead",
-    "tier": "moderate",
-    "topic": "Food, Honey & Fermenting Mead",
-    "keywords": ["food", "meat", "honey", "bee", "mead", "potion", "brew", "cauldron", "health", "stamina", "sausage", "stew"],
-    "troll_mental_model": "vikings eat three foods. cook meat on fire. steal bee honey. drink juice from wood barrel."
+    "tier": "expert",
+    "topic": "Food, Fermenting Meads & Potions",
+    "keywords": ["food", "meat", "honey", "bee", "mead", "potion", "brew", "cauldron", "fermenter", "health", "stamina", "eitr", "poison resistance", "frost resistance", "sausage", "stew"],
+    "troll_mental_model": "vikings eat three different foods together to boost red health bar, yellow stamina bar, or purple eitr magic bar. meat from boars, deer, lox, seekers. mead bases cooked in iron cauldron and brewed in wooden fermenter for two game days. poison resistance mead is mandatory for swamps. frost resistance mead is mandatory for mountains without wolf fur cloak."
   },
   "building_and_base": {
     "id": "building_and_base",
     "tier": "expert",
-    "topic": "Viking Wood & Stone Houses",
-    "keywords": ["house", "base", "workbench", "wall", "palisade", "moat", "trench", "shelter", "bed", "fire"],
-    "troll_mental_model": "vikings build wood huts and stone walls. dig dirt holes. troll like to smash huts with log."
+    "topic": "Building Bases, Defenses & Smashing Huts",
+    "keywords": ["house", "base", "workbench", "forge", "wall", "palisade", "moat", "trench", "shelter", "comfort", "rested", "fire", "roof", "chimney"],
+    "troll_mental_model": "vikings build wood and stone bases. need workbench and roof for shelter. beds need fire nearby with open chimney for smoke escape so vikings do not choke on gray smoke. high comfort level gives longer rested bonus for stamina regen. smart vikings dig deep dirt trenches and steep moats with pickaxes because troll logs cannot reach across deep dirt holes."
+  },
+  "merchant_haldor_and_hildir": {
+    "id": "merchant_haldor_and_hildir",
+    "tier": "expert",
+    "topic": "Merchants (Haldor & Hildir)",
+    "keywords": ["haldor", "trader", "merchant", "hildir", "coins", "gold", "megingjord", "belt", "halstein", "fishing", "bubble", "shield"],
+    "troll_mental_model": "haldor is friendly little dwarf trader in black forest. sits by campfire inside magic blue protective dome rune shield with his big pet lox halstein. bukeperry cannot smash through haldor blue bubble! haldor buys amber, rubies, and gold coins. sells megingjord strength belt to carry more weight, dverger circlet headlamp, and fishing rod with bait. his sister hildir is in plains with request quests."
+  },
+  "sailing_and_ocean": {
+    "id": "sailing_and_ocean",
+    "tier": "moderate",
+    "topic": "Boats, Sailing & The Ocean",
+    "keywords": ["boat", "ship", "sail", "sailing", "raft", "karve", "longship", "drakkar", "ocean", "sea serpent", "serpent", "leviathan", "chitin", "abyssal harpoon"],
+    "troll_mental_model": "boats in order: tiny slow wood raft, nimble karve with small cargo, fast big longship with giant cargo hull, and giant iron drakkar ship for surviving ashlands boiling waters. wind arrow on map shows wind direction. big blue sea serpents swim in dark stormy ocean, drop serpent meat and scales for serpent shield. giant turtle rock leviathans float on water, vikings mine abyssal barnacles for chitin harpoons before beast submerges."
+  },
+  "magic_and_eitr": {
+    "id": "magic_and_eitr",
+    "tier": "rumors",
+    "topic": "Eitr & Magic Staves",
+    "keywords": ["magic", "eitr", "staff", "staves", "staff of embers", "staff of frost", "dead raiser", "blood magic", "elemental magic", "skelets", "bubble shield", "protection"],
+    "troll_mental_model": "late game vikings in mistlands and ashlands eat glowing blue eitr foods to cast wizard spells with staves. staff of embers shoots fireballs. staff of frost shoots rapid ice machine gun. dead raiser summons skeleton thralls using blood sacrifice. staff of protection puts glowing bubble shield on vikings and allies. troll thinks magic is weird glowing stick trick."
   }
 }

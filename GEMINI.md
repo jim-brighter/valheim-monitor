@@ -76,6 +76,10 @@ npx cdk synth --all
 # Run monitor-lambda unit tests (Vitest)
 cd monitor-lambda
 npm test
+
+# Run llm-lambda unit tests (Vitest)
+cd llm-lambda
+npm test
 ```
 
 ---
@@ -105,8 +109,8 @@ Required secret structure:
 1. **Node.js Runtime**: All AWS Lambdas use Node.js 24 (`Runtime.NODEJS_24_X`).
 2. **Bundling**: TypeScript / Node.js bundling is handled automatically during CDK synth/deploy via `NodejsFunction` and `esbuild`.
 3. **Discord Webhook Timeout**: Discord interaction endpoints MUST respond within 3000ms. Do not run heavy processing or Bedrock API calls inside `handler.ts`; pass workloads asynchronously to `worker.ts`.
-4. **Bukeperry Persona**: Strict caveman troll formatting rules enforced in `worker.ts`:
-   - All lowercase text.
-   - Short sentences (3–5 words).
-   - No asterisks, stage directions, or markdown formatting in output.
+4. **Bukeperry Persona & Lore Guardrails**:
+   - Strict caveman troll formatting in `worker.ts`: all lowercase text, short sentences (3–5 words), no asterisks or stage directions.
+   - Persona: Proud, swaggering brute troll. King of Black Forest, treats Meadows creatures like pets/snacks, treats Swamps as a muddy nuisance, refuses Mountain due to bare feet freezing in snow, and expresses confident/amused rumor bravado for Plains, Mistlands, and Ashlands.
+   - Canonical 7-Boss World Order: 1: Eikthyr (Meadows), 2: The Elder (Black Forest), 3: Bonemass (Swamp), 4: Moder (Mountain), 5: Yagluth (Plains), 6: The Queen (Mistlands), 7: Fader (Ashlands / Final Boss).
 5. **Documentation Maintenance**: Always keep `GEMINI.md` and `README.md` updated whenever changes are made to architecture, timing/TTL parameters, configurations, or features.

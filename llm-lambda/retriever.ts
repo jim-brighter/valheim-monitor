@@ -10,7 +10,14 @@ export interface KnowledgeEntry {
 
 const knowledgeMap: Record<string, KnowledgeEntry> = knowledgeData as Record<string, KnowledgeEntry>;
 
-export function retrieveValheimFacts(prompt: string, maxResults: number = 3): string {
+const tierDescriptions: Record<KnowledgeEntry['tier'], string> = {
+  expert: 'EXPERT KNOWLEDGE - You know this intimately as a master of the woods and meadows',
+  moderate: 'MODERATE KNOWLEDGE - You know this well',
+  vague: 'VAGUE KNOWLEDGE - You know this from mountain border, but refuse to go up due to bare feet freezing',
+  rumors: 'RUMORS - Far away gossip; know facts accurately but speak with amused troll swagger'
+};
+
+export function retrieveValheimFacts(prompt: string, maxResults: number = 4): string {
   if (!prompt || typeof prompt !== 'string') {
     return '';
   }
@@ -24,10 +31,11 @@ export function retrieveValheimFacts(prompt: string, maxResults: number = 3): st
     for (const keyword of entry.keywords) {
       const kw = keyword.toLowerCase();
       if (cleanPrompt.includes(kw)) {
-        // Higher weight for exact word matches vs partial substrings
+        // Multi-word phrase exact match gets higher weight
+        const isMultiWord = kw.includes(' ');
         const wordRegex = new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
         if (wordRegex.test(cleanPrompt)) {
-          score += 3;
+          score += isMultiWord ? 6 : 3;
         } else {
           score += 1;
         }
@@ -49,7 +57,8 @@ export function retrieveValheimFacts(prompt: string, maxResults: number = 3): st
   const topEntries = scoredEntries.slice(0, maxResults).map(e => e.entry);
 
   const lines = topEntries.map(e => {
-    return `- [Troll Knowledge Level: ${e.tier.toUpperCase()}] ${e.topic}: ${e.troll_mental_model}`;
+    const tierDesc = tierDescriptions[e.tier] || e.tier.toUpperCase();
+    return `- [${tierDesc}] ${e.topic}: ${e.troll_mental_model}`;
   });
 
   return `BUKEPERRY'S MEMORIES & KNOWLEDGE:\n${lines.join('\n')}`;
