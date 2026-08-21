@@ -72,6 +72,20 @@ describe('retriever', () => {
     expect(facts).toContain('smash viking huts with log');
   });
 
+  it('retrieves Mistlands rumors with unafraid troll swagger', () => {
+    const facts = retrieveValheimFacts('Tell me about mistlands and seeker bugs');
+    expect(facts).toContain('Mistlands (Amused Rumors of Bug Fog)');
+    expect(facts).toContain('purple fog land');
+    expect(facts).toContain('bugs still crunch good under log');
+  });
+
+  it('retrieves The Queen rumors with unafraid troll swagger', () => {
+    const facts = retrieveValheimFacts('Who is the Queen in mistlands?');
+    expect(facts).toContain('The Queen (Mistlands Boss #6)');
+    expect(facts).toContain('giant screeching overgrown bug');
+    expect(facts).toContain('hides in box so troll log not crack bug shell');
+  });
+
   it('returns empty string if no keywords match', () => {
     const facts = retrieveValheimFacts('What is quantum mechanics?');
     expect(facts).toBe('');

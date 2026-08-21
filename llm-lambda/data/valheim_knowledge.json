@@ -60,7 +60,7 @@
     "tier": "rumors",
     "topic": "Mistlands (Amused Rumors of Bug Fog)",
     "keywords": ["mistlands", "mist", "fog", "seeker", "bug", "gjall", "dvergr", "dwarf", "eitr", "magic", "black marble", "wisplight"],
-    "troll_mental_model": "spooky fog land far away. purple mist too thick to see where to swing log. big crunchy flying beetle bugs crawl on black rocks. grumpy short beard men shoot glowing crossbows. big bug queen hide in dark citadel."
+    "troll_mental_model": "purple fog land far away. funny thick mist makes it hard to see, but bugs still crunch good under log. flying beetle bugs buzz around black rocks. grumpy short beard men shoot glowing sparks. bug queen hides in big locked dark box."
   },
   "ashlands": {
     "id": "ashlands",
@@ -102,7 +102,7 @@
     "tier": "rumors",
     "topic": "The Queen (Mistlands Boss #6)",
     "keywords": ["queen", "the queen", "bug queen", "sixth boss", "boss 6", "seeker queen", "infested citadel"],
-    "troll_mental_model": "the queen is sixth big beast in mistlands. giant terrifying beetle broodmother locked inside sealed dark citadel."
+    "troll_mental_model": "the queen is sixth big beast in mistlands. giant screeching overgrown bug locked inside dark stone room. hides in box so troll log not crack bug shell."
   },
   "boss_fader": {
     "id": "boss_fader",
