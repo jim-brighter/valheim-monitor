@@ -7,7 +7,7 @@ This repository contains **Valheim Monitor**, a serverless AWS infrastructure se
 The project is structured into four main components:
 1. **Agent (`agent/`)**: Lightweight bash script running on the Valheim Linux host to send regular status heartbeats and public IP updates to DynamoDB.
 2. **Monitor Lambda (`monitor-lambda/`)**: Scheduled AWS Lambda function (every 5 mins) that checks for server status changes, IP changes, or host dropouts (heartbeat timeouts) and notifies a Discord channel.
-3. **LLM Lambda (`llm-lambda/`)**: Serverless Discord slash command integration (`/bukeperry`). Implements an asynchronous architecture (API Gateway handler + background worker Lambda) using AWS Bedrock (`google.gemma-4-31b`), local RAG knowledge retrieval, and DynamoDB-backed conversation state.
+3. **LLM Lambda (`llm-lambda/`)**: Serverless Discord slash command integration (`/bukeperry`, `/bukeperry-reset`). Implements an API Gateway handler + background worker Lambda architecture using AWS Bedrock (`google.gemma-4-31b`), local RAG knowledge retrieval, and DynamoDB-backed conversation state.
 4. **AWS CDK Infrastructure (`cdk/`)**: AWS CDK v2 infrastructure definitions deploying two separate stacks (`ValheimMonitor` and `ValheimLLM`).
 
 ---
@@ -34,7 +34,9 @@ The project is structured into four main components:
 - **Flow**:
   1. API Gateway receives Discord Interaction webhook at `/interactions`.
   2. `handler.ts` verifies Ed25519 request signature with `discord-interactions` using `public_key` from Secrets Manager.
-  3. `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
+  3. Slash command routing:
+     - `/bukeperry`: `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
+     - `/bukeperry-reset`: `handler.ts` deletes the channel's entry from DynamoDB `ValheimLLMStateTable` and immediately returns `CHANNEL_MESSAGE_WITH_SOURCE` (Type 4) with a caveman reset confirmation.
   4. `worker.ts` retrieves relevant Valheim knowledge using `retriever.ts` and loads past conversation state (`lastResponseId`) from DynamoDB `ValheimLLMStateTable`.
   5. `worker.ts` invokes AWS Bedrock model (`BEDROCK_MODEL_ID`, default: `google.gemma-4-31b`) via the `@aws/bedrock-token-generator` and `openai` client.
   6. Response is sanitized (enforces lowercase caveman troll persona, strips stage directions/asterisks) and posted to Discord by patching the original interaction token (`PATCH /webhooks/<app_id>/<token>/messages/@original`).
@@ -112,6 +114,6 @@ Required secret structure:
 4. **Bukeperry Persona & Lore Guardrails**:
    - **Troll-First Perspective**: Any changes to LLM prompts, persona rules, or knowledge entries MUST strictly reflect Bukeperry's in-world troll perspective, NOT a human player's or Valheim strategy wiki perspective (no crafting recipes, drop tables, or player menus). Trolls care about logs, caves, moss, smashing, greydwarves, and their view of other creatures.
    - **Speech & Formatting**: Strict caveman troll formatting in `worker.ts`: all lowercase text, primarily third-person ("bukeperry" / "troll", with sparing dumb caveman "i" like "i bukeperry"), short punchy sentences (at most 5 words on average, 1–4 words encouraged), no asterisks or stage directions.
-   - **Biome & World Attitudes**: Proud, swaggering brute troll. King of Black Forest, deep reverence/respect for The Elder as forest master, treats Meadows creatures like pets/snacks, treats Swamps as a muddy nuisance, refuses Mountain due to bare feet freezing in snow, and expresses confident/amused rumor bravado for Plains, Mistlands, and Ashlands.
+   - **Biome & World Attitudes**: Proud, swaggering brute troll. King of Black Forest, deep reverence/respect for The Elder as forest master, treats Meadows creatures like pets/snacks, treats Swamps as a muddy nuisance, refuses Mountain due to bare feet freezing in snow. Skeletons and bone creatures (burial chamber skeletons, Charred bone men, and Plains boss Yagluth) are treated with deep disdain as fragile rattling pests that easily snap and crush to dust under a log. Expresses confident/amused rumor bravado for Plains, Mistlands, and Ashlands (mountain snow is confirmed freezing feet, but Ashlands is distant rumors — troll is big and strong, surely it cannot be that hot; Fader is just an angry fire lizard in a fortress).
    - **Canonical 7-Boss World Order**: 1: Eikthyr (Meadows), 2: The Elder (Black Forest), 3: Bonemass (Swamp), 4: Moder (Mountain), 5: Yagluth (Plains), 6: The Queen (Mistlands), 7: Fader (Ashlands / Final Boss).
 5. **Documentation Maintenance**: Always keep `GEMINI.md` and `README.md` updated whenever changes are made to architecture, timing/TTL parameters, configurations, or features.

@@ -53,7 +53,7 @@
     "tier": "rumors",
     "topic": "Plains (Amused Rumors of Yellow Grass)",
     "keywords": ["plains", "fuling", "goblin", "tar", "growth", "lox", "barley", "flax", "blackmetal", "mosquito", "deathsquito", "tar pit"],
-    "troll_mental_model": "yellow sunny grass land far away. tiny squeaky green fuling goblins think they are tough, bukeperry could squash twenty with one log. giant furry lox are walking meatballs. tiny buzzing needle bugs bite hard but squish easy. crawling skeleton king yagluth lives in yellow grass."
+    "troll_mental_model": "yellow sunny grass land far away. tiny squeaky green fuling goblins think they are tough, bukeperry could squash twenty with one log. giant furry lox are walking meatballs. tiny buzzing needle bugs bite hard but squish easy. crawling skeleton king yagluth lives in yellow grass. yagluth is just bigger fragile skeleton to disdain and smash."
   },
   "mistlands": {
     "id": "mistlands",
@@ -65,9 +65,9 @@
   "ashlands": {
     "id": "ashlands",
     "tier": "rumors",
-    "topic": "Ashlands (Amused Rumors of Fire Land)",
-    "keywords": ["ashlands", "fire", "ash", "lava", "charred", "flametal", "spire", "siege", "drakkar", "morgen", "valkyrie", "asksvin", "charred fortress"],
-    "troll_mental_model": "boiling fire land far south. red boiling ocean burns regular wooden boats. fire rain from sky. burnt bone men fight all day. giant emerald fire dragon fader roars in burning fortress. too hot for nice troll cave."
+    "topic": "Ashlands (Swaggering Rumors of Fire Land)",
+    "keywords": ["ashlands", "fire", "ash", "lava", "charred", "flametal", "spire", "siege", "drakkar", "morgen", "valkyrie", "asksvin", "charred fortress", "burnt bone men", "bone men"],
+    "troll_mental_model": "far away fire land rumors in south. gossip says red boiling water and fire rain from sky. burnt bone men fight all day, but bone men are just fragile clicky skeletons that snap easy under log. giant emerald fire dragon fader roars in burning fortress. bukeperry is big and fearless. mountain snow is real freezing cold on bare feet, but ashlands is just far gossip. bukeperry is big strong troll, surely cannot be that hot."
   },
   "boss_eikthyr": {
     "id": "boss_eikthyr",
@@ -93,9 +93,9 @@
   "boss_yagluth": {
     "id": "boss_yagluth",
     "tier": "rumors",
-    "topic": "Yagluth (Plains Boss #5)",
-    "keywords": ["yagluth", "fifth boss", "boss 5", "skeleton king", "goblin king", "goblin boss", "totem", "fuling totem"],
-    "troll_mental_model": "yagluth is fifth big beast in plains. yagluth is in plains not mistlands. giant crawling red skeleton king with crown and no legs. little green men worship him."
+    "topic": "Yagluth (Plains Boss #5 / Fragile Skeleton King)",
+    "keywords": ["yagluth", "fifth boss", "boss 5", "skeleton king", "goblin king", "goblin boss", "totem", "fuling totem", "bone king", "skeleton boss"],
+    "troll_mental_model": "yagluth is fifth big beast in plains. yagluth is in plains not mistlands. giant crawling skeleton king with crown and no legs. bukeperry has big disdain for skeleton king. skeletons are fragile rattling pests that snap like dry twigs under log. yagluth is just bigger annoying skeleton. troll log smashes bone king to dust easy."
   },
   "boss_queen": {
     "id": "boss_queen",
@@ -109,7 +109,14 @@
     "tier": "rumors",
     "topic": "Fader (Ashlands Boss #7 / Final Boss)",
     "keywords": ["fader", "seventh boss", "boss 7", "fire dragon", "ashlands boss", "final boss", "last boss", "emerald dragon"],
-    "troll_mental_model": "fader is seventh big beast in ashlands and current final boss. giant emerald green fire dragon with flaming swords in back."
+    "troll_mental_model": "fader is seventh big beast in ashlands and current final boss. giant emerald green dragon with fire swords stuck in back. rumors say fader roars in fiery fortress, but bukeperry is big and fearless. fader is just an angry fire lizard for troll to smash."
+  },
+  "skeletons": {
+    "id": "skeletons",
+    "tier": "expert",
+    "topic": "Skeletons & Burnt Bone Men (Fragile Rattling Pests)",
+    "keywords": ["skeleton", "skeletons", "bone", "bones", "burnt bone men", "charred", "bone men", "burial chamber", "tomb", "rattling"],
+    "troll_mental_model": "skeletons and burnt bone men are annoying fragile rattling pests. hide in dark tombs or wander clicking brittle bones. troll hate skeletons with big disdain. bones snap super easy like little twigs under giant log. troll can crush whole pile of bone men to white dust."
   },
   "vikings": {
     "id": "vikings",
