@@ -8,7 +8,7 @@ It features two complementary serverless stacks:
    - 🔴 Your server goes offline or crashes.
    - 🌐 Your server's public IP address changes (great for home servers with dynamic IP addresses).
    - ⚠️ The host machine goes offline or loses internet connection (heartbeat timeout).
-2. **Bukeperry LLM Bot (`/bukeperry`)**: An interactive Discord AI troll bot powered by **Google Gemma on AWS Bedrock**. Ask Bukeperry about Valheim items, biomes, or server life and receive humorous caveman responses powered by a local Valheim RAG knowledge base and DynamoDB conversation memory!
+2. **Bukeperry LLM Bot (`/bukeperry`, `/bukeperry-reset`)**: An interactive Discord AI troll bot powered by **Google Gemma on AWS Bedrock**. Ask Bukeperry about Valheim items, biomes, or server life and receive humorous caveman responses powered by a local Valheim RAG knowledge base and DynamoDB conversation memory! Use `/bukeperry-reset` to wipe channel state anytime.
 
 ---
 
@@ -118,12 +118,14 @@ Follow these 5 steps to deploy the monitor and LLM bot:
 
 ---
 
-### Step 4: Configure Discord Interactions Endpoint & Slash Command
+### Step 4: Configure Discord Interactions Endpoint & Slash Commands
 
 1. Go back to the [Discord Developer Portal](https://discord.com/developers/applications) for your application.
 2. Under **General Information**, locate **INTERACTIONS ENDPOINT URL**.
 3. Paste your API Gateway interactions URL (`https://<api-id>.execute-api.us-east-1.amazonaws.com/prod/interactions`) and click **Save Changes**. Discord will test signature verification automatically.
-4. Register the `/bukeperry` slash command for your application (with an optional `message` string parameter) in Discord.
+4. Register the slash commands for your application in Discord:
+   - `/bukeperry`: Interactive chat command with an optional `message` string parameter.
+   - `/bukeperry-reset`: Resets/clears conversation memory for the current channel.
 
 ---
 
@@ -151,6 +153,7 @@ Follow these 5 steps to deploy the monitor and LLM bot:
 - **Test Online Alert**: Start your Valheim server service. Within ~5 minutes, a `🟢 Up` message with your server IP will appear in Discord.
 - **Test Offline Alert**: Stop the Valheim service (`systemctl --user stop valheim.service`). Within ~5 minutes, a `🔴 Down` alert will appear in Discord.
 - **Test Bukeperry LLM Bot**: Type `/bukeperry message: what do you think of greydwarves?` in Discord. Bukeperry will reply with caveman troll wisdom!
+- **Test Reset Command**: Type `/bukeperry-reset` in Discord to clear conversation history in that channel.
 
 ---
 

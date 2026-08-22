@@ -83,10 +83,12 @@ export class ValheimLLMStack extends cdk.Stack {
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(30),
       environment: {
-        WORKER_LAMBDA_NAME: workerLambda.functionName
+        WORKER_LAMBDA_NAME: workerLambda.functionName,
+        STATE_TABLE_NAME: stateTable.tableName,
       }
     });
 
+    stateTable.grantReadWriteData(llmLambda);
     workerLambda.grantInvoke(llmLambda);
 
     const secret = Secret.fromSecretNameV2(this, 'ValheimLLMSecret', 'valheim-monitor-secrets');

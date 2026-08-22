@@ -7,7 +7,7 @@ This repository contains **Valheim Monitor**, a serverless AWS infrastructure se
 The project is structured into four main components:
 1. **Agent (`agent/`)**: Lightweight bash script running on the Valheim Linux host to send regular status heartbeats and public IP updates to DynamoDB.
 2. **Monitor Lambda (`monitor-lambda/`)**: Scheduled AWS Lambda function (every 5 mins) that checks for server status changes, IP changes, or host dropouts (heartbeat timeouts) and notifies a Discord channel.
-3. **LLM Lambda (`llm-lambda/`)**: Serverless Discord slash command integration (`/bukeperry`). Implements an asynchronous architecture (API Gateway handler + background worker Lambda) using AWS Bedrock (`google.gemma-4-31b`), local RAG knowledge retrieval, and DynamoDB-backed conversation state.
+3. **LLM Lambda (`llm-lambda/`)**: Serverless Discord slash command integration (`/bukeperry`, `/bukeperry-reset`). Implements an API Gateway handler + background worker Lambda architecture using AWS Bedrock (`google.gemma-4-31b`), local RAG knowledge retrieval, and DynamoDB-backed conversation state.
 4. **AWS CDK Infrastructure (`cdk/`)**: AWS CDK v2 infrastructure definitions deploying two separate stacks (`ValheimMonitor` and `ValheimLLM`).
 
 ---
@@ -34,7 +34,9 @@ The project is structured into four main components:
 - **Flow**:
   1. API Gateway receives Discord Interaction webhook at `/interactions`.
   2. `handler.ts` verifies Ed25519 request signature with `discord-interactions` using `public_key` from Secrets Manager.
-  3. `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
+  3. Slash command routing:
+     - `/bukeperry`: `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
+     - `/bukeperry-reset`: `handler.ts` deletes the channel's entry from DynamoDB `ValheimLLMStateTable` and immediately returns `CHANNEL_MESSAGE_WITH_SOURCE` (Type 4) with a caveman reset confirmation.
   4. `worker.ts` retrieves relevant Valheim knowledge using `retriever.ts` and loads past conversation state (`lastResponseId`) from DynamoDB `ValheimLLMStateTable`.
   5. `worker.ts` invokes AWS Bedrock model (`BEDROCK_MODEL_ID`, default: `google.gemma-4-31b`) via the `@aws/bedrock-token-generator` and `openai` client.
   6. Response is sanitized (enforces lowercase caveman troll persona, strips stage directions/asterisks) and posted to Discord by patching the original interaction token (`PATCH /webhooks/<app_id>/<token>/messages/@original`).
