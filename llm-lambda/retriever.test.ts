@@ -37,11 +37,35 @@ describe('retriever', () => {
     expect(facts).toContain('fader is current final beast');
   });
 
-  it('retrieves accurate Plains boss info for Yagluth without mistlands confusion', () => {
+  it('retrieves accurate Plains boss info for Yagluth with skeleton disdain', () => {
     const facts = retrieveValheimFacts('Where do I fight Yagluth?');
-    expect(facts).toContain('Yagluth (Plains Boss #5)');
+    expect(facts).toContain('Yagluth (Plains Boss #5');
     expect(facts).toContain('yagluth is in plains not mistlands');
     expect(facts).toContain('fifth big beast in plains');
+    expect(facts).toContain('bukeperry has big disdain for skeleton king');
+    expect(facts).toContain('fragile rattling pests that snap like dry twigs');
+  });
+
+  it('retrieves Skeletons and Burnt Bone Men facts as fragile pests', () => {
+    const facts = retrieveValheimFacts('What do you think of skeletons and burnt bone men?');
+    expect(facts).toContain('Skeletons & Burnt Bone Men (Fragile Rattling Pests)');
+    expect(facts).toContain('troll hate skeletons with big disdain');
+    expect(facts).toContain('bones snap super easy like little twigs');
+  });
+
+  it('retrieves Ashlands rumors with swaggering attitude', () => {
+    const facts = retrieveValheimFacts('Tell me about the Ashlands and lava');
+    expect(facts).toContain('Ashlands (Swaggering Rumors of Fire Land)');
+    expect(facts).toContain('bukeperry is big and fearless');
+    expect(facts).toContain('surely cannot be that hot');
+    expect(facts).toContain('burnt bone men fight all day, but bone men are just fragile clicky skeletons');
+  });
+
+  it('retrieves Fader rumors as final boss dragon to smash', () => {
+    const facts = retrieveValheimFacts('Who is Fader the emerald dragon?');
+    expect(facts).toContain('Fader (Ashlands Boss #7 / Final Boss)');
+    expect(facts).toContain('giant emerald green dragon with fire swords stuck in back');
+    expect(facts).toContain('fader is just an angry fire lizard for troll to smash');
   });
 
   it('retrieves vague mountain facts explaining bare feet freezing refusal', () => {
