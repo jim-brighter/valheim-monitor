@@ -82,6 +82,11 @@ npm test
 # Run llm-lambda unit tests (Vitest)
 cd llm-lambda
 npm test
+
+# Run worker.ts locally (accepts optional prompt argument)
+cd llm-lambda
+npm run local
+npm run local "tell me about swamp"
 ```
 
 ---

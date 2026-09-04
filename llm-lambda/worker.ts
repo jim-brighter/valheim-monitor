@@ -69,7 +69,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
 
   let lastResponseId: string | undefined;
   const tableName = process.env.STATE_TABLE_NAME;
-  const modelId = process.env.BEDROCK_MODEL_ID!;
+  const modelId = process.env.BEDROCK_MODEL_ID || 'google.gemma-4-31b';
 
   const retrievedFacts = retrieveValheimFacts(prompt);
   const instructions = retrievedFacts
@@ -144,6 +144,11 @@ export async function handler(event: WorkerEvent): Promise<void> {
       } catch (putErr) {
         console.error('Failed to save response.id to DynamoDB:', putErr);
       }
+    }
+
+    if (applicationId === 'localtesting') {
+      console.log(`\n\n${replyContent}`);
+      return;
     }
 
     // Patch the original Discord interaction message

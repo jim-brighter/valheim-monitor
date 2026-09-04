@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "local": "tsx run-local.ts",
+    "start": "tsx run-local.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -17,8 +19,9 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.162",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.4.1",
     "esbuild": "^0.28.2",
+    "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   }
