@@ -10,9 +10,5 @@ const event: WorkerEvent = {
   prompt,
 };
 
-if (!process.env.BEDROCK_MODEL_ID) {
-  process.env.BEDROCK_MODEL_ID = 'google.gemma-4-31b';
-}
-
 console.log(`Running worker locally with prompt: "${event.prompt}"\n---`);
 await handler(event);

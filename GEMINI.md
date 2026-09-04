@@ -38,7 +38,7 @@ The project is structured into four main components:
      - `/bukeperry`: `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
      - `/bukeperry-reset`: `handler.ts` deletes the channel's entry from DynamoDB `ValheimLLMStateTable` and immediately returns `CHANNEL_MESSAGE_WITH_SOURCE` (Type 4) with a caveman reset confirmation.
   4. `worker.ts` retrieves relevant Valheim knowledge using `retriever.ts` and loads past conversation state (`lastResponseId`) from DynamoDB `ValheimLLMStateTable`.
-  5. `worker.ts` invokes AWS Bedrock model (`BEDROCK_MODEL_ID`, default: `google.gemma-4-31b`) via the `@aws/bedrock-token-generator` and `openai` client.
+  5. `worker.ts` invokes AWS Bedrock model (`DEFAULT_BEDROCK_MODEL_ID`, default: `google.gemma-4-31b`) via the `@aws/bedrock-token-generator` and `openai` client.
   6. Response is sanitized (enforces lowercase caveman troll persona, strips stage directions/asterisks) and posted to Discord by patching the original interaction token (`PATCH /webhooks/<app_id>/<token>/messages/@original`).
   7. New response ID is saved to DynamoDB with a 30-day TTL for conversation continuity.
 

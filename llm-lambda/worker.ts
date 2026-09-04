@@ -11,6 +11,8 @@ export interface WorkerEvent {
   prompt: string;
 }
 
+export const DEFAULT_BEDROCK_MODEL_ID = 'google.gemma-4-31b';
+
 const dbClient = new DynamoDBClient({ region: 'us-east-1' });
 const docClient = DynamoDBDocumentClient.from(dbClient);
 
@@ -69,7 +71,7 @@ export async function handler(event: WorkerEvent): Promise<void> {
 
   let lastResponseId: string | undefined;
   const tableName = process.env.STATE_TABLE_NAME;
-  const modelId = process.env.BEDROCK_MODEL_ID || 'google.gemma-4-31b';
+  const modelId = process.env.BEDROCK_MODEL_ID || DEFAULT_BEDROCK_MODEL_ID;
 
   const retrievedFacts = retrieveValheimFacts(prompt);
   const instructions = retrievedFacts
