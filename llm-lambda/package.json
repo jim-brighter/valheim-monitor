@@ -9,20 +9,20 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.1121.0",
-    "@aws-sdk/client-lambda": "^3.1121.0",
-    "@aws-sdk/client-secrets-manager": "^3.1121.0",
-    "@aws-sdk/lib-dynamodb": "^3.1121.0",
+    "@aws-sdk/client-dynamodb": "^3.1127.0",
+    "@aws-sdk/client-lambda": "^3.1127.0",
+    "@aws-sdk/client-secrets-manager": "^3.1127.0",
+    "@aws-sdk/lib-dynamodb": "^3.1127.0",
     "@aws/bedrock-token-generator": "^1.1.0",
     "discord-interactions": "^4.4.0",
-    "openai": "^7.8.0"
+    "openai": "^7.10.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.162",
+    "@types/aws-lambda": "^8.10.163",
     "@types/node": "^26.4.1",
     "esbuild": "^0.28.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   }
 }
