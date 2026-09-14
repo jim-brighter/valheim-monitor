@@ -112,8 +112,8 @@ describe('evaluateStatusChange', () => {
     });
   });
 
-  it('should treat server as inactive if agent update is older than 2.5 minutes', () => {
-    const staleTime = now - (3 * 60 * 1000); // 3 minutes ago
+  it('should treat server as inactive if agent update is older than 5 minutes', () => {
+    const staleTime = now - (6 * 60 * 1000); // 6 minutes ago
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'active',
@@ -132,7 +132,7 @@ describe('evaluateStatusChange', () => {
   });
 
   it('should suppress repeated notifications if server is down due to stale heartbeat and lambda already knows it is inactive', () => {
-    const staleTime = now - (3 * 60 * 1000);
+    const staleTime = now - (6 * 60 * 1000);
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'active',

@@ -43,7 +43,7 @@ export class ValheimMonitorStack extends cdk.Stack {
     secret.grantRead(monitorLambda);
 
     const rule = new Rule(this, 'ValheimMonitorSchedule', {
-      schedule: Schedule.cron({ minute: '*/5' })
+      schedule: Schedule.cron({ minute: '2/5' })
     });
 
     rule.addTarget(new LambdaFunction(monitorLambda));

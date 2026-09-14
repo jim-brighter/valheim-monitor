@@ -32,7 +32,7 @@ It features two complementary serverless stacks:
               |______________________ Patches Original Interaction Webhook _______________________|
 ```
 
-1. **Server Monitor**: A lightweight bash script running on your Valheim host checks server status and writes heartbeats to AWS DynamoDB every 2 minutes. An EventBridge rule triggers a Lambda function every 5 minutes to evaluate status transitions and post Discord alerts.
+1. **Server Monitor**: A lightweight bash script running on your Valheim host checks server status and writes heartbeats to AWS DynamoDB every 5 minutes. An EventBridge rule triggers a Lambda function every 5 minutes (offset by 2 minutes) to evaluate status transitions and post Discord alerts.
 2. **Bukeperry LLM Bot**: When a user runs `/bukeperry <message>` in Discord, API Gateway routes the request to an edge handler Lambda which validates the Ed25519 request signature and returns an immediate deferred response (<3s). The handler triggers a background worker Lambda that queries a Valheim knowledge base (RAG), checks conversation history in DynamoDB, calls the Bedrock Gemma model (`google.gemma-4-31b`), and patches the Discord interaction response with Bukeperry's caveman reply.
 
 ---
@@ -137,13 +137,13 @@ Follow these 5 steps to deploy the monitor and LLM bot:
    ```bash
    chmod +x /home/steam/monitor.sh
    ```
-4. Add a cron job to run the agent every 2 minutes:
+4. Add a cron job to run the agent every 5 minutes:
    ```bash
    crontab -e
    ```
    Add the following line:
    ```cron
-   */2 * * * * /home/steam/monitor.sh > /dev/null 2>&1
+   */5 * * * * /home/steam/monitor.sh > /dev/null 2>&1
    ```
 
 ---
