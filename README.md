@@ -8,6 +8,7 @@ It features two complementary serverless stacks:
    - 🔴 Your server goes offline or crashes.
    - 🌐 Your server's public IP address changes (great for home servers with dynamic IP addresses).
    - ⚠️ The host machine goes offline or loses internet connection (heartbeat timeout).
+   - 💾 A scheduled server backup is missed (older than 25 hours).
 2. **Bukeperry LLM Bot (`/bukeperry`, `/bukeperry-reset`)**: An interactive Discord AI troll bot powered by **Google Gemma on AWS Bedrock**. Ask Bukeperry about Valheim items, biomes, or server life and receive humorous caveman responses powered by a local Valheim RAG knowledge base and DynamoDB conversation memory! Use `/bukeperry-reset` to wipe channel state anytime.
 
 ---
@@ -189,6 +190,7 @@ valheim-monitor/
 └── monitor-lambda/
     ├── handler.js       # AWS Lambda handler orchestrating server status evaluations
     ├── evaluator.js     # Pure business logic evaluating server state transitions
+    ├── config.js        # Monitor timing thresholds (heartbeat timeout, backup max age)
     ├── db.js            # DynamoDB interface for server heartbeats
     ├── secrets.js       # AWS Secrets Manager interface
     ├── discord.js       # Discord REST API client

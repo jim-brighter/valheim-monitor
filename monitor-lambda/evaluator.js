@@ -12,25 +12,53 @@ import { CONFIG } from './config.js';
  * @returns {{ shouldNotify: boolean, updatedLambdaState: Object|null, messageContent: string|null }}
  */
 export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secrets = {}, now = Date.now() }) {
-  const { ipAddress: agentIp, status: agentStatus, currentVersion: agentVersion, updatedTimestamp: agentUpdateTimestamp } = agentState;
-  const { ipAddress: lambdaIp, status: lambdaStatus, currentVersion: lambdaVersion } = lambdaState;
+  const { ipAddress: agentIp, status: agentStatus, currentVersion: agentVersion, lastBackupTimestamp: agentLastBackupTimestamp, updatedTimestamp: agentUpdateTimestamp } = agentState;
+  const { ipAddress: lambdaIp, status: lambdaStatus, currentVersion: lambdaVersion, lastBackupTimestamp: lambdaLastBackupTimestamp } = lambdaState;
 
-  const diff = agentUpdateTimestamp ? now - agentUpdateTimestamp : Infinity;
-  if (Number.isFinite(diff)) {
-    console.log(`Last update from agent was ${diff / 1000} seconds ago`);
-  } else {
-    console.log('No previous timestamp recorded for agent update');
+  const updateDiff = agentUpdateTimestamp ? now - agentUpdateTimestamp : Infinity;
+  const updateTooOld = updateDiff > CONFIG.AGENT_TIMEOUT_MS;
+
+  const updatedLambdaState = {
+    PK: CONFIG.STATUS_KEYS.LAMBDA,
+    ipAddress: lambdaIp,
+    status: lambdaStatus,
+    currentVersion: lambdaVersion,
+    lastBackupTimestamp: lambdaLastBackupTimestamp
+  };
+
+  const messages = [];
+
+  if (agentIp && agentIp !== lambdaIp) {
+    const portString = secrets.port ? `:${secrets.port}` : '';
+    messages.push(`New Address: ${agentIp}${portString}`);
+    updatedLambdaState.ipAddress = agentIp;
   }
 
-  const updateTooOld = diff > CONFIG.AGENT_TIMEOUT_MS;
-  const isAlreadyDown = updateTooOld && lambdaStatus === 'inactive';
-  const isUnchanged =
-    !updateTooOld &&
-    agentIp === lambdaIp &&
-    agentStatus === lambdaStatus &&
-    agentVersion === lambdaVersion;
+  const serverStatus = updateTooOld ? 'inactive' : agentStatus;
+  if (serverStatus && serverStatus !== lambdaStatus) {
+    const statusMessage = serverStatus === 'active' ? '🟢 Up' : '🔴 Down';
+    messages.push(`Server Status: ${statusMessage}`);
+    updatedLambdaState.status = serverStatus;
+  }
 
-  if (isAlreadyDown || isUnchanged) {
+  if (agentVersion && agentVersion !== lambdaVersion) {
+    messages.push(`Server was updated to version ${agentVersion}`);
+    updatedLambdaState.currentVersion = agentVersion;
+  }
+
+  if (agentLastBackupTimestamp) {
+    const backupDiff = now - agentLastBackupTimestamp;
+    const backupTooOld = backupDiff > CONFIG.MAX_BACKUP_AGE_MS;
+    const alreadyNotified = lambdaLastBackupTimestamp === agentLastBackupTimestamp;
+
+    if (backupTooOld && !alreadyNotified) {
+      const hoursAgo = Math.floor(backupDiff / 1000 / 60 / 60);
+      messages.push(`Missed backup - last backup was ${hoursAgo} hours ago`);
+      updatedLambdaState.lastBackupTimestamp = agentLastBackupTimestamp;
+    }
+  }
+
+  if (messages.length === 0) {
     return {
       shouldNotify: false,
       updatedLambdaState: null,
@@ -38,36 +66,9 @@ export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secret
     };
   }
 
-  let messageContent = '**Valheim Server Status Updates**';
-  const updatedLambdaState = {
-    PK: CONFIG.STATUS_KEYS.LAMBDA,
-    ipAddress: lambdaIp,
-    status: lambdaStatus,
-    currentVersion: lambdaVersion
-  };
-
-  if (agentIp !== lambdaIp) {
-    const portString = secrets.port ? `:${secrets.port}` : '';
-    messageContent += `\nNew Address: ${agentIp}${portString}`;
-    updatedLambdaState.ipAddress = agentIp;
-  }
-
-  const serverStatus = updateTooOld ? 'inactive' : agentStatus;
-
-  if (serverStatus !== lambdaStatus) {
-    const statusMessage = serverStatus === 'active' ? '🟢 Up' : '🔴 Down';
-    messageContent += `\nServer Status: ${statusMessage}`;
-    updatedLambdaState.status = serverStatus;
-  }
-
-  if (agentVersion !== lambdaVersion) {
-    messageContent += `\nServer was updated to version ${agentVersion}`;
-    updatedLambdaState.currentVersion = agentVersion;
-  }
-
   return {
     shouldNotify: true,
     updatedLambdaState,
-    messageContent
+    messageContent: `**Valheim Server Status Updates**\n${messages.join('\n')}`
   };
 }
