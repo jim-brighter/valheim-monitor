@@ -15,17 +15,17 @@
     "synth": "npm run cdk:llm-lambda:install && npm run cdk:llm-lambda:test && npm run cdk:monitor-lambda:install && npm run cdk:monitor-lambda:test && cdk synth --all"
   },
   "devDependencies": {
-    "@swc/core": "^1.16.1",
+    "@swc/core": "^1.16.2",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "jest": "^30",
-    "aws-cdk": "2.1140.0",
+    "aws-cdk": "2.1141.0",
     "tsx": "^4.23.13",
     "typescript": "~7.0.2"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.268.0",
+    "aws-cdk-lib": "^2.269.0",
     "constructs": "^10.5.0"
   }
 }

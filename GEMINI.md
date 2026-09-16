@@ -15,19 +15,20 @@ The project is structured into four main components:
 ## 🏗️ Architecture & Component Details
 
 ### 1. `agent/monitor.sh`
-- Runs via `cron` on the Valheim host server every 2 minutes.
-- Checks systemd service status (`valheim.service`) and public IP address (`ipv4.icanhazip.com`).
-- Uses AWS CLI to write heartbeats (`PK: SERVER#VALHEIM`) to DynamoDB table `ValheimMonitorTable`.
+- Runs via `cron` on the Valheim host server every 5 minutes.
+- Checks systemd service status (`valheim.service`), public IP address (`ipv4.icanhazip.com`), server version, and latest backup archive timestamp.
+- Uses AWS CLI to write heartbeats (`PK: agent-status`) to DynamoDB table `ValheimMonitorTable`.
 
 ### 2. `monitor-lambda/`
 - **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), tested with Vitest.
 - **Modules**:
-  - `handler.js`: Main orchestration entrypoint triggered by EventBridge cron (`minute: '*/5'`).
-  - `evaluator.js`: Pure functional evaluation of server state transitions (`ONLINE`, `OFFLINE`, `HEARTBEAT_TIMEOUT`, `IP_CHANGED`).
+  - `handler.js`: Main orchestration entrypoint triggered by EventBridge cron (`minute: '2/5'`).
+  - `evaluator.js`: Pure functional evaluation of server state transitions (`ONLINE`, `OFFLINE`, `HEARTBEAT_TIMEOUT`, `IP_CHANGED`, `VERSION_CHANGED`, `MISSED_BACKUP`).
+  - `config.js`: Configuration constants including `AGENT_TIMEOUT_MS` (5 mins) and `MAX_BACKUP_AGE_MS` (25 hours).
   - `db.js`: Interacts with `ValheimMonitorTable`.
   - `secrets.js`: Fetches bot credentials from Secrets Manager (`valheim-monitor-secrets`).
   - `discord.js`: Posts formatted alerts via Discord REST API.
-- **Tests**: `evaluator.test.js` covers state transitions and timeouts.
+- **Tests**: `evaluator.test.js` covers state transitions, timeouts, version updates, and backup staleness.
 
 ### 3. `llm-lambda/`
 - **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), TypeScript (`handler.ts`, `worker.ts`, `retriever.ts`).
