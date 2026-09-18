@@ -1,4 +1,4 @@
-import { AttributeType, BillingMode, Table, TableEncryption } from 'aws-cdk-lib/aws-dynamodb';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
@@ -14,7 +14,6 @@ export class ValheimMonitorStack extends cdk.Stack {
 
     const table = new Table(this, 'ValheimMonitorTable', {
       partitionKey: { name: 'PK', type: AttributeType.STRING },
-      encryption: TableEncryption.AWS_MANAGED,
       tableName: 'ValheimMonitorTable',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: BillingMode.PAY_PER_REQUEST,
