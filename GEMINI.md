@@ -20,18 +20,29 @@ The project is structured into four main components:
 - Uses AWS CLI to write heartbeats (`PK: agent-status`) to DynamoDB table `ValheimMonitorTable`.
 
 ### 2. `monitor-lambda/`
-- **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), tested with Vitest.
-- **Modules**:
-  - `handler.js`: Main orchestration entrypoint triggered by EventBridge cron (`minute: '2/5'`).
-  - `evaluator.js`: Pure functional evaluation of server state transitions (`ONLINE`, `OFFLINE`, `HEARTBEAT_TIMEOUT`, `IP_CHANGED`, `VERSION_CHANGED`, `MISSED_BACKUP`).
-  - `config.js`: Configuration constants including `AGENT_TIMEOUT_MS` (5 mins) and `MAX_BACKUP_AGE_MS` (25 hours).
-  - `db.js`: Interacts with `ValheimMonitorTable`.
-  - `secrets.js`: Fetches bot credentials from Secrets Manager (`valheim-monitor-secrets`).
-  - `discord.js`: Posts formatted alerts via Discord REST API.
-- **Tests**: `evaluator.test.js` covers state transitions, timeouts, version updates, and backup staleness.
+- **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), TypeScript, tested with Vitest.
+- **Directory Structure**:
+  - `src/`:
+    - `handler.ts`: Main orchestration entrypoint triggered by EventBridge cron (`minute: '2/5'`).
+    - `evaluator.ts`: Pure functional evaluation of server state transitions (`ONLINE`, `OFFLINE`, `HEARTBEAT_TIMEOUT`, `IP_CHANGED`, `VERSION_CHANGED`, `MISSED_BACKUP`).
+    - `config.ts`: Configuration constants including `AGENT_TIMEOUT_MS` (5 mins) and `MAX_BACKUP_AGE_MS` (25 hours).
+    - `db.ts`: Interacts with `ValheimMonitorTable`.
+    - `secrets.ts`: Fetches bot credentials from Secrets Manager (`valheim-monitor-secrets`).
+    - `discord.ts`: Posts formatted alerts via Discord REST API.
+    - `types.ts`: TypeScript type definitions for agent state, lambda state, secrets, and evaluator results.
+  - `test/`:
+    - Unit test suites covering evaluator, secrets, db, discord, and handler (`evaluator.test.ts`, `secrets.test.ts`, `db.test.ts`, `discord.test.ts`, `handler.test.ts`).
 
 ### 3. `llm-lambda/`
-- **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), TypeScript (`handler.ts`, `worker.ts`, `retriever.ts`).
+- **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), TypeScript, tested with Vitest.
+- **Directory Structure**:
+  - `src/`:
+    - `handler.ts`: Discord interaction webhook handler (Ed25519 signature verification & deferred response).
+    - `worker.ts`: Background worker invoking Bedrock LLM and managing DynamoDB conversation state.
+    - `retriever.ts`: Local RAG retrieval engine querying `data/valheim_knowledge.json`.
+    - `data/valheim_knowledge.json`: Structured Valheim lore & troll knowledge base.
+  - `test/`:
+    - Unit tests for handler and retriever (`handler.test.ts`, `retriever.test.ts`).
 - **Flow**:
   1. API Gateway receives Discord Interaction webhook at `/interactions`.
   2. `handler.ts` verifies Ed25519 request signature with `discord-interactions` using `public_key` from Secrets Manager.

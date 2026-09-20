@@ -57,7 +57,7 @@ vi.mock('@aws-sdk/lib-dynamodb', () => ({
   },
 }));
 
-import { handler } from './handler.js';
+import { handler } from '../src/handler.js';
 
 describe('Discord interaction handler', () => {
   beforeEach(() => {

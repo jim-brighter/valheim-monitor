@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { retrieveValheimFacts } from './retriever.js';
+import { retrieveValheimFacts } from '../src/retriever.js';
 
 describe('retriever', () => {
   it('retrieves expert Black Forest home facts from troll perspective', () => {

@@ -182,19 +182,31 @@ valheim-monitor/
 │       ├── cdk-stack.ts # AWS CDK stack for Server Status Monitor (DynamoDB, Lambda, Cron)
 │       └── llm-stack.ts # AWS CDK stack for Bukeperry LLM Bot (API Gateway, Bedrock, Worker)
 ├── llm-lambda/
-│   ├── handler.ts       # Discord interaction API Gateway handler (Ed25519 signature & deferred 200)
-│   ├── worker.ts        # Async worker Lambda executing Bedrock Gemma LLM & state management
-│   ├── retriever.ts     # RAG retriever matching Valheim topics & troll mental models
-│   └── data/
-│       └── valheim_knowledge.json # Structured Valheim knowledge base
+│   ├── run-local.ts     # Local execution CLI harness for Bedrock prompts
+│   ├── src/
+│   │   ├── handler.ts   # Discord interaction API Gateway handler (Ed25519 signature & deferred 200)
+│   │   ├── worker.ts    # Async worker Lambda executing Bedrock Gemma LLM & state management
+│   │   ├── retriever.ts # RAG retriever matching Valheim topics & troll mental models
+│   │   └── data/
+│   │       └── valheim_knowledge.json # Structured Valheim knowledge base
+│   └── test/
+│       ├── handler.test.ts   # Vitest test suite for Discord interaction handler
+│       └── retriever.test.ts # Vitest test suite for RAG retrieval logic
 └── monitor-lambda/
-    ├── handler.js       # AWS Lambda handler orchestrating server status evaluations
-    ├── evaluator.js     # Pure business logic evaluating server state transitions
-    ├── config.js        # Monitor timing thresholds (heartbeat timeout, backup max age)
-    ├── db.js            # DynamoDB interface for server heartbeats
-    ├── secrets.js       # AWS Secrets Manager interface
-    ├── discord.js       # Discord REST API client
-    └── evaluator.test.js# Vitest test suite for evaluator logic
+    ├── src/
+    │   ├── handler.ts   # AWS Lambda handler orchestrating server status evaluations
+    │   ├── evaluator.ts # Pure business logic evaluating server state transitions
+    │   ├── config.ts    # Monitor timing thresholds (heartbeat timeout, backup max age)
+    │   ├── db.ts        # DynamoDB interface for server heartbeats
+    │   ├── secrets.ts   # AWS Secrets Manager interface
+    │   ├── discord.ts   # Discord REST API client
+    │   └── types.ts     # TypeScript interfaces and types
+    └── test/
+        ├── evaluator.test.ts # Vitest test suite for evaluator logic
+        ├── secrets.test.ts   # Vitest test suite for Secrets Manager client & caching
+        ├── db.test.ts        # Vitest test suite for DynamoDB operations
+        ├── discord.test.ts   # Vitest test suite for Discord REST API notifications
+        └── handler.test.ts   # Vitest test suite for handler orchestration
 ```
 
 ---

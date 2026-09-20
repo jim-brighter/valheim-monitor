@@ -1,7 +1,10 @@
 {
+  "name": "monitor-lambda",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1131.0",
@@ -9,7 +12,11 @@
     "@aws-sdk/lib-dynamodb": "^3.1131.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.163",
+    "@types/node": "^26.5.1",
     "esbuild": "^0.28.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
     "vitest": "^5.0.0"
   }
 }

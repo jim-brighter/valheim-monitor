@@ -1,4 +1,4 @@
-import { handler, WorkerEvent } from './worker.js';
+import { handler, WorkerEvent } from './src/worker.js';
 
 const cliPrompt = process.argv.slice(2).join(' ').trim();
 const prompt = cliPrompt || 'tell me about black forest';
