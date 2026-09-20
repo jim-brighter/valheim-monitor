@@ -24,7 +24,7 @@ export class ValheimMonitorStack extends cdk.Stack {
       runtime: Runtime.NODEJS_24_X,
       handler: 'handler',
       depsLockFilePath: '../monitor-lambda/package-lock.json',
-      entry: '../monitor-lambda/handler.js',
+      entry: '../monitor-lambda/src/handler.ts',
       environment: {
         TABLE_NAME: table.tableName
       },

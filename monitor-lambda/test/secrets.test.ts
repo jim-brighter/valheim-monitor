@@ -10,14 +10,12 @@ vi.mock('@aws-sdk/client-secrets-manager', () => {
       send = mockSend;
     },
     GetSecretValueCommand: class {
-      constructor(input) {
-        this.input = input;
-      }
+      constructor(public input: any) {}
     },
   };
 });
 
-import { getSecrets } from './secrets.js';
+import { getSecrets } from '../src/secrets.js';
 
 describe('getSecrets', () => {
   beforeEach(() => {

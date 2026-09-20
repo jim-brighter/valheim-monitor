@@ -1,32 +1,45 @@
 import { CONFIG } from './config.js';
+import type { EvaluateStatusChangeParams, EvaluationResult, LambdaState } from './types.js';
 
 /**
  * Evaluates the status of the agent against the current Lambda state.
  * Determines if a notification should be sent and returns the updated state.
  *
- * @param {Object} params
- * @param {Object} [params.agentState] - Status recorded by the agent in DynamoDB
- * @param {Object} [params.lambdaState] - Last status stored by the Lambda in DynamoDB
- * @param {Object} [params.secrets] - Secrets containing port and notification settings
- * @param {number} [params.now] - Current timestamp (ms), defaults to Date.now()
- * @returns {{ shouldNotify: boolean, updatedLambdaState: Object|null, messageContent: string|null }}
+ * @param params - Parameters for evaluation including agentState, lambdaState, secrets, and now timestamp
+ * @returns Object with shouldNotify, updatedLambdaState, and messageContent
  */
-export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secrets = {}, now = Date.now() }) {
-  const { ipAddress: agentIp, status: agentStatus, currentVersion: agentVersion, lastBackupTimestamp: agentLastBackupTimestamp, updatedTimestamp: agentUpdateTimestamp } = agentState;
-  const { ipAddress: lambdaIp, status: lambdaStatus, currentVersion: lambdaVersion, lastBackupTimestamp: lambdaLastBackupTimestamp } = lambdaState;
+export function evaluateStatusChange({
+  agentState = {},
+  lambdaState = {},
+  secrets = {},
+  now = Date.now(),
+}: EvaluateStatusChangeParams = {}): EvaluationResult {
+  const {
+    ipAddress: agentIp,
+    status: agentStatus,
+    currentVersion: agentVersion,
+    lastBackupTimestamp: agentLastBackupTimestamp,
+    updatedTimestamp: agentUpdateTimestamp,
+  } = agentState;
+  const {
+    ipAddress: lambdaIp,
+    status: lambdaStatus,
+    currentVersion: lambdaVersion,
+    lastBackupTimestamp: lambdaLastBackupTimestamp,
+  } = lambdaState;
 
   const updateDiff = agentUpdateTimestamp ? now - agentUpdateTimestamp : Infinity;
   const updateTooOld = updateDiff > CONFIG.AGENT_TIMEOUT_MS;
 
-  const updatedLambdaState = {
+  const updatedLambdaState: LambdaState = {
     PK: CONFIG.STATUS_KEYS.LAMBDA,
     ipAddress: lambdaIp,
     status: lambdaStatus,
     currentVersion: lambdaVersion,
-    lastBackupTimestamp: lambdaLastBackupTimestamp
+    lastBackupTimestamp: lambdaLastBackupTimestamp,
   };
 
-  const messages = [];
+  const messages: string[] = [];
 
   if (agentIp && agentIp !== lambdaIp) {
     const portString = secrets.port ? `:${secrets.port}` : '';
@@ -62,13 +75,13 @@ export function evaluateStatusChange({ agentState = {}, lambdaState = {}, secret
     return {
       shouldNotify: false,
       updatedLambdaState: null,
-      messageContent: null
+      messageContent: null,
     };
   }
 
   return {
     shouldNotify: true,
     updatedLambdaState,
-    messageContent: `**Valheim Server Status Updates**\n${messages.join('\n')}`
+    messageContent: `**Valheim Server Status Updates**\n${messages.join('\n')}`,
   };
 }

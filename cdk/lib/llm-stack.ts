@@ -39,7 +39,7 @@ export class ValheimLLMStack extends cdk.Stack {
       runtime: Runtime.NODEJS_24_X,
       handler: 'handler',
       depsLockFilePath: '../llm-lambda/package-lock.json',
-      entry: '../llm-lambda/worker.ts',
+      entry: '../llm-lambda/src/worker.ts',
       bundling: {
         minify: true,
         externalModules: [],
@@ -71,7 +71,7 @@ export class ValheimLLMStack extends cdk.Stack {
       runtime: Runtime.NODEJS_24_X,
       handler: 'handler',
       depsLockFilePath: '../llm-lambda/package-lock.json',
-      entry: '../llm-lambda/handler.ts',
+      entry: '../llm-lambda/src/handler.ts',
       bundling: {
         minify: true,
         externalModules: [],

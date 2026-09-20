@@ -5,6 +5,6 @@ export const CONFIG = {
   MAX_BACKUP_AGE_MS: 25 * 60 * 60 * 1000, // 25 hours
   STATUS_KEYS: {
     AGENT: 'agent-status',
-    LAMBDA: 'lambda-status'
-  }
-};
+    LAMBDA: 'lambda-status',
+  },
+} as const;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateStatusChange } from './evaluator.js';
+import { evaluateStatusChange } from '../src/evaluator.js';
 
 describe('evaluateStatusChange', () => {
   const secrets = { port: 2456 };
@@ -9,11 +9,11 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      updatedTimestamp: now - 30_000 // 30 seconds ago
+      updatedTimestamp: now - 30_000, // 30 seconds ago
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'active'
+      status: 'active',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -27,11 +27,11 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '5.6.7.8',
       status: 'active',
-      updatedTimestamp: now - 30_000
+      updatedTimestamp: now - 30_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'active'
+      status: 'active',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -41,7 +41,7 @@ describe('evaluateStatusChange', () => {
     expect(result.updatedLambdaState).toEqual({
       PK: 'lambda-status',
       ipAddress: '5.6.7.8',
-      status: 'active'
+      status: 'active',
     });
   });
 
@@ -49,11 +49,11 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'inactive',
-      updatedTimestamp: now - 30_000
+      updatedTimestamp: now - 30_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'active'
+      status: 'active',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -63,7 +63,7 @@ describe('evaluateStatusChange', () => {
     expect(result.updatedLambdaState).toEqual({
       PK: 'lambda-status',
       ipAddress: '1.2.3.4',
-      status: 'inactive'
+      status: 'inactive',
     });
   });
 
@@ -71,11 +71,11 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      updatedTimestamp: now - 30_000
+      updatedTimestamp: now - 30_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'inactive'
+      status: 'inactive',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -85,7 +85,7 @@ describe('evaluateStatusChange', () => {
     expect(result.updatedLambdaState).toEqual({
       PK: 'lambda-status',
       ipAddress: '1.2.3.4',
-      status: 'active'
+      status: 'active',
     });
   });
 
@@ -93,11 +93,11 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '9.9.9.9',
       status: 'active',
-      updatedTimestamp: now - 10_000
+      updatedTimestamp: now - 10_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'inactive'
+      status: 'inactive',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -108,7 +108,7 @@ describe('evaluateStatusChange', () => {
     expect(result.updatedLambdaState).toEqual({
       PK: 'lambda-status',
       ipAddress: '9.9.9.9',
-      status: 'active'
+      status: 'active',
     });
   });
 
@@ -117,18 +117,18 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      updatedTimestamp: staleTime
+      updatedTimestamp: staleTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'active'
+      status: 'active',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
 
     expect(result.shouldNotify).toBe(true);
     expect(result.messageContent).toContain('Server Status: 🔴 Down');
-    expect(result.updatedLambdaState.status).toBe('inactive');
+    expect(result.updatedLambdaState?.status).toBe('inactive');
   });
 
   it('should suppress repeated notifications if server is down due to stale heartbeat and lambda already knows it is inactive', () => {
@@ -136,11 +136,11 @@ describe('evaluateStatusChange', () => {
     const agentState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      updatedTimestamp: staleTime
+      updatedTimestamp: staleTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'inactive'
+      status: 'inactive',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -153,12 +153,12 @@ describe('evaluateStatusChange', () => {
       ipAddress: '1.2.3.4',
       status: 'active',
       currentVersion: '0.217.28',
-      updatedTimestamp: now - 30_000
+      updatedTimestamp: now - 30_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.27'
+      currentVersion: '0.217.27',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -169,7 +169,7 @@ describe('evaluateStatusChange', () => {
       PK: 'lambda-status',
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     });
   });
 
@@ -178,12 +178,12 @@ describe('evaluateStatusChange', () => {
       ipAddress: '5.6.7.8',
       status: 'active',
       currentVersion: '0.217.28',
-      updatedTimestamp: now - 10_000
+      updatedTimestamp: now - 10_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'inactive',
-      currentVersion: '0.217.27'
+      currentVersion: '0.217.27',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -196,7 +196,7 @@ describe('evaluateStatusChange', () => {
       PK: 'lambda-status',
       ipAddress: '5.6.7.8',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     });
   });
 
@@ -205,12 +205,12 @@ describe('evaluateStatusChange', () => {
       ipAddress: '1.2.3.4',
       status: 'active',
       currentVersion: '0.217.28',
-      updatedTimestamp: now - 30_000
+      updatedTimestamp: now - 30_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -225,12 +225,11 @@ describe('evaluateStatusChange', () => {
       ipAddress: '1.2.3.4',
       status: 'active',
       currentVersion: '0.217.28',
-      updatedTimestamp: now - 30_000
+      updatedTimestamp: now - 30_000,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
-      status: 'active'
-      // currentVersion is missing / undefined
+      status: 'active',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -241,7 +240,7 @@ describe('evaluateStatusChange', () => {
       PK: 'lambda-status',
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     });
   });
 
@@ -252,19 +251,19 @@ describe('evaluateStatusChange', () => {
       status: 'active',
       currentVersion: '0.217.28',
       updatedTimestamp: now - 30_000,
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
 
     expect(result.shouldNotify).toBe(true);
     expect(result.messageContent).toContain('Missed backup - last backup was 26 hours ago');
-    expect(result.updatedLambdaState.lastBackupTimestamp).toBe(staleBackupTime);
+    expect(result.updatedLambdaState?.lastBackupTimestamp).toBe(staleBackupTime);
   });
 
   it('should suppress repeated notifications when missed backup was already alerted', () => {
@@ -274,13 +273,13 @@ describe('evaluateStatusChange', () => {
       status: 'active',
       currentVersion: '0.217.28',
       updatedTimestamp: now - 30_000,
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
       currentVersion: '0.217.28',
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -297,12 +296,12 @@ describe('evaluateStatusChange', () => {
       status: 'active',
       currentVersion: '0.217.28',
       updatedTimestamp: now - 30_000,
-      lastBackupTimestamp: recentBackupTime
+      lastBackupTimestamp: recentBackupTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -316,12 +315,12 @@ describe('evaluateStatusChange', () => {
       status: 'active',
       currentVersion: '0.217.28',
       updatedTimestamp: now - 30_000,
-      lastBackupTimestamp: 0
+      lastBackupTimestamp: 0,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -336,12 +335,12 @@ describe('evaluateStatusChange', () => {
       status: 'inactive',
       currentVersion: '0.217.28',
       updatedTimestamp: now - 10_000,
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
-      currentVersion: '0.217.28'
+      currentVersion: '0.217.28',
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -355,7 +354,7 @@ describe('evaluateStatusChange', () => {
       ipAddress: '5.6.7.8',
       status: 'inactive',
       currentVersion: '0.217.28',
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     });
   });
 
@@ -366,13 +365,13 @@ describe('evaluateStatusChange', () => {
       status: 'active',
       currentVersion: '0.217.28',
       updatedTimestamp: now - 10_000,
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     };
     const lambdaState = {
       ipAddress: '1.2.3.4',
       status: 'active',
       currentVersion: '0.217.28',
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     };
 
     const result = evaluateStatusChange({ agentState, lambdaState, secrets, now });
@@ -385,7 +384,7 @@ describe('evaluateStatusChange', () => {
       ipAddress: '5.6.7.8',
       status: 'active',
       currentVersion: '0.217.28',
-      lastBackupTimestamp: staleBackupTime
+      lastBackupTimestamp: staleBackupTime,
     });
   });
 });
