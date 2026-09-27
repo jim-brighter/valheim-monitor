@@ -1,4 +1,6 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
+using HarmonyLib;
 using Jotunn.Utils;
 
 namespace BukeperryMod
@@ -12,9 +14,16 @@ namespace BukeperryMod
         public const string PluginName = "BukeperryMod";
         public const string PluginVersion = "0.1.0";
 
+        internal static ManualLogSource Log;
+
         private void Awake()
         {
+            Log = Logger;
             Logger.LogInfo($"{PluginName} v{PluginVersion} loaded! Bukeperry waking up.");
+
+            BukeperryPrefab.Init();
+
+            Harmony.CreateAndPatchAll(typeof(BukeperryPlugin).Assembly, PluginGUID);
         }
     }
 }

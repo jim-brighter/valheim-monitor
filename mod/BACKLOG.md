@@ -24,17 +24,17 @@ Establish the C# / BepInEx 5.x development environment, dependencies, build pipe
 
 ---
 
-## Epic 1: The Bukeperry Character & AI Behavior (Phase 1)
+## Epic 1: The Bukeperry Character & AI Behavior (Phase 1) 🟡
 Implement the custom Bukeperry troll prefab, unique stats, custom Dvergr-style non-hostile/retaliatory AI, and persistent world placement.
 
-- [ ] **Story 1.1**: Define Bukeperry prefab & combat stats.
-  - *Acceptance Criteria*: Custom prefab cloned from `Troll_log` with unique name (`Bukeperry`), 15,000 HP, 1,000 damage attacks.
-- [ ] **Story 1.2**: Implement custom Dvergr-style retaliation AI.
+- [x] **Story 1.1**: Define Bukeperry prefab & combat stats.
+  - *Acceptance Criteria*: Custom prefab cloned from `Troll` with unique name (`Bukeperry`), 15,000 HP, 1,000 damage attacks. (Completed: In-game verified with custom log weapon and 15k HP).
+- [x] **Story 1.2**: Implement custom Dvergr-style retaliation AI.
   - *Acceptance Criteria*: 
     - Passive to players by default.
     - If damaged by a player, targets that player until dead.
     - Drops aggro and returns to passive once target viking dies.
-    - Normal troll hostility towards other biomes/mobs.
+    - Normal troll hostility towards other biomes/mobs. (Completed: Verified in-game using BukeperryController and directional IsEnemy patch).
 - [ ] **Story 1.3**: Implement world locator and persistent spawn.
   - *Acceptance Criteria*: On world load, scans for nearest Black Forest zone to `(0,0,0)`, spawns Bukeperry if not already present, and persists ZDO.
 
