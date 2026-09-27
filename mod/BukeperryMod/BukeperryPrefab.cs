@@ -16,6 +16,11 @@ namespace BukeperryMod
 
     private static void RegisterPrefab()
     {
+      if (PrefabManager.Instance.GetPrefab(PrefabName) != null)
+      {
+        return;
+      }
+      
       GameObject vanillaTroll = PrefabManager.Instance.GetPrefab("Troll");
       if (vanillaTroll == null)
       {
@@ -34,6 +39,7 @@ namespace BukeperryMod
       if (monsterAI != null)
       {
         monsterAI.m_aggravatable = true;
+        monsterAI.m_avoidWater = true;
       }
 
       GameObject vanillaLogItem = null;

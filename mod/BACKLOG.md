@@ -35,8 +35,13 @@ Implement the custom Bukeperry troll prefab, unique stats, custom Dvergr-style n
     - If damaged by a player, targets that player until dead.
     - Drops aggro and returns to passive once target viking dies.
     - Normal troll hostility towards other biomes/mobs. (Completed: Verified in-game using BukeperryController and directional IsEnemy patch).
-- [ ] **Story 1.3**: Implement world locator and persistent spawn.
-  - *Acceptance Criteria*: On world load, scans for nearest Black Forest zone to `(0,0,0)`, spawns Bukeperry if not already present, and persists ZDO.
+- [x] **Story 1.3**: Implement world locator and persistent spawn.
+  - *Acceptance Criteria*: On world load, scans for nearest Black Forest zone to `(0,0,0)`, spawns Bukeperry if not already present, and persists ZDO. (Completed: Procedural world scan locates closest dry Black Forest position; ZDO saved to chunk and verified persistent in-game).
+- [ ] **Story 1.4**: Bukeperry respawns after one in-game day.
+  - *Acceptance Criteria*:
+    - When Bukeperry is killed, record time of death.
+    - Respawns at his Black Forest home location after 1 in-game day (or next sunrise/cooldown).
+    - Prevents duplicate spawns across world reboots during the cooldown.
 
 ---
 

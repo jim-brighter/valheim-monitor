@@ -44,5 +44,21 @@ namespace BukeperryMod
         controller.OnAttackedBy(player);
       }
     }
+
+    [HarmonyPatch(typeof(ZoneSystem), "Start")]
+    [HarmonyPostfix]
+    public static void OnZoneSystemStart(ZoneSystem __instance)
+    {
+      if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
+
+      if (__instance.LocationsGenerated)
+      {
+        BukeperrySpawner.CheckAndSpawn();
+      }
+      else
+      {
+        __instance.GenerateLocationsCompleted += BukeperrySpawner.CheckAndSpawn;
+      }
+    }
   }
 }
