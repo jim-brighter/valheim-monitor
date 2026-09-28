@@ -4,11 +4,12 @@
 
 This repository contains **Valheim Monitor**, a serverless AWS infrastructure setup that monitors a dedicated Valheim game server and hosts **Bukeperry Bot**, a custom Discord AI assistant powered by Google Gemma on AWS Bedrock.
 
-The project is structured into four main components:
+The project is structured into five main components:
 1. **Agent (`agent/`)**: Lightweight bash script running on the Valheim Linux host to send regular status heartbeats and public IP updates to DynamoDB.
 2. **Monitor Lambda (`monitor-lambda/`)**: Scheduled AWS Lambda function (every 5 mins) that checks for server status changes, IP changes, or host dropouts (heartbeat timeouts) and notifies a Discord channel.
-3. **LLM Lambda (`llm-lambda/`)**: Serverless Discord slash command integration (`/bukeperry`, `/bukeperry-reset`). Implements an API Gateway handler + background worker Lambda architecture using AWS Bedrock (`google.gemma-4-31b`), local RAG knowledge retrieval, and DynamoDB-backed conversation state.
+3. **LLM Lambda (`llm-lambda/`)**: Serverless Discord slash command integration (`/bukeperry`, `/bukeperry-reset`) and in-game chat endpoint (`POST /game/chat`). Implements an API Gateway handler + background worker Lambda architecture using AWS Bedrock (`google.gemma-4-31b`), local RAG knowledge retrieval, and DynamoDB-backed conversation state.
 4. **AWS CDK Infrastructure (`cdk/`)**: AWS CDK v2 infrastructure definitions deploying two separate stacks (`ValheimMonitor` and `ValheimLLM`).
+5. **Bukeperry Mod & Distribution (`mod/`)**: In-game C# companion mod for Valheim (BepInEx 5 & Jötunn), Linux dedicated server bundle packager (`package-server-bundle.sh`), headless server installer (`install-server.sh`), and Thunderstore publishing tooling (`thunderstore/publish.sh`).
 
 ---
 
@@ -37,30 +38,47 @@ The project is structured into four main components:
 - **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), TypeScript, tested with Vitest.
 - **Directory Structure**:
   - `src/`:
+    - `core.ts`: Shared Bedrock LLM core (`generateBukeperryReply`), local RAG knowledge retrieval, caveman persona sanitization, and DynamoDB state management.
     - `handler.ts`: Discord interaction webhook handler (Ed25519 signature verification & deferred response).
-    - `worker.ts`: Background worker invoking Bedrock LLM and managing DynamoDB conversation state.
+    - `worker.ts`: Background worker invoking shared core and patching Discord interaction message.
+    - `gameHandler.ts`: Synchronous HTTP handler for in-game chat (`POST /game/chat`), secured by API Gateway API Key.
     - `retriever.ts`: Local RAG retrieval engine querying `data/valheim_knowledge.json`.
     - `data/valheim_knowledge.json`: Structured Valheim lore & troll knowledge base.
   - `test/`:
-    - Unit tests for handler and retriever (`handler.test.ts`, `retriever.test.ts`).
+    - Unit tests for handler, gameHandler, and retriever (`handler.test.ts`, `gameHandler.test.ts`, `retriever.test.ts`).
 - **Flow**:
-  1. API Gateway receives Discord Interaction webhook at `/interactions`.
-  2. `handler.ts` verifies Ed25519 request signature with `discord-interactions` using `public_key` from Secrets Manager.
-  3. Slash command routing:
-     - `/bukeperry`: `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
-     - `/bukeperry-reset`: `handler.ts` deletes the channel's entry from DynamoDB `ValheimLLMStateTable` and immediately returns `CHANNEL_MESSAGE_WITH_SOURCE` (Type 4) with a caveman reset confirmation.
-  4. `worker.ts` retrieves relevant Valheim knowledge using `retriever.ts` and loads past conversation state (`lastResponseId`) from DynamoDB `ValheimLLMStateTable`.
-  5. `worker.ts` invokes AWS Bedrock model (`DEFAULT_BEDROCK_MODEL_ID`, default: `google.gemma-4-31b`) via the `@aws/bedrock-token-generator` and `openai` client.
-  6. Response is sanitized (enforces lowercase caveman troll persona, strips stage directions/asterisks) and posted to Discord by patching the original interaction token (`PATCH /webhooks/<app_id>/<token>/messages/@original`).
-  7. New response ID is saved to DynamoDB with a 30-day TTL for conversation continuity.
+  1. **Discord Path**:
+     - API Gateway receives Discord Interaction webhook at `/interactions`.
+     - `handler.ts` verifies Ed25519 signature, returns deferred response (Type 5), invokes `worker.ts` asynchronously.
+     - `worker.ts` calls `generateBukeperryReply` in `core.ts` and patches Discord interaction original message.
+  2. **In-Game Chat Path**:
+     - Game server / client sends `POST /game/chat` with `x-api-key` header and JSON body `{ prompt, channelId? }`.
+     - API Gateway validates API Key against `ValheimModUsagePlan` at the edge (rejects unauthorized with 403).
+     - `gameHandler.ts` validates payload, calls `generateBukeperryReply(prompt, channelId)` synchronously, and returns `{ reply }` with status 200.
 
 ### 4. `cdk/`
 - **Entrypoint**: `bin/cdk.ts` instantiates:
   - `ValheimMonitorStack` (`lib/cdk-stack.ts`): DynamoDB table `ValheimMonitorTable`, `ValheimMonitorLambda`, EventBridge rule, Secrets Manager read policy.
-  - `ValheimLLMStack` (`lib/llm-stack.ts`): DynamoDB state table `ValheimLLMStateTable`, `ValheimLLMWorkerLambda`, `ValheimLLMLambda`, REST API Gateway (`ValheimLLMGateway`), Secrets Manager read policy, Bedrock IAM permissions.
+  - `ValheimLLMStack` (`lib/llm-stack.ts`): DynamoDB state table `ValheimLLMStateTable`, `ValheimLLMWorkerLambda`, `ValheimLLMLambda`, `ValheimLLMGameLambda`, REST API Gateway (`ValheimLLMGateway`) with routes `/interactions` and `/game/chat`, `ValheimModApiKey`, `ValheimModUsagePlan`, Secrets Manager read policy, Bedrock IAM permissions.
 
-### 5. `.github/workflows/`
-- `main.yml`: Auto-deploys all stacks via AWS CDK on push to `main` using GitHub OIDC role. Creates GitHub releases via `jim-brighter/github-release-action`.
+### 5. `mod/` (Bukeperry Mod & Distribution Tooling)
+- **Mod Architecture**:
+  - `BukeperryMod/`: C# .NET Standard 2.1 project utilizing BepInEx 5 and Jötunn.
+  - Custom Troll Prefab & Merchant: Registers custom `bukeperry` NPC trader with custom dialog lines, inventory items, and logs purchase anti-greed check.
+  - Conversational AI: Sniffs `/s` shouts and proximity speech, dispatches async HTTP POSTs to API Gateway off-thread, and delivers responses via `ZRoutedRpc` `BukeperrySpeechRPC` (overhead bubble `Chat.SetNpcText` + chat log).
+  - Single Source of Truth: Mod version is maintained solely in `BukeperryPlugin.cs` (`PluginVersion = "0.1.0"`).
+- **Distribution Targets**:
+  - **Thunderstore / r2modman (Client Players)**:
+    - Namespace: `jimbrighter`, Package: `BukeperryMod`.
+    - Auto-dependencies: `denikson-BepInExPack_Valheim-5.4.2351` and `ValheimModding-Jotunn-2.30.2`.
+    - Automated packaging & publishing via `mod/thunderstore/publish.sh` using Thunderstore CLI (`tcli`).
+    - Zero client config required (all AI calls are handled server-side).
+  - **Linux Dedicated Server (`/home/vhserver`)**:
+    - Packager: `mod/package-server-bundle.sh` packages `bukeperry-server-bundle.zip` (BepInEx Unix + Doorstop + Jotunn + BukeperryMod.dll).
+    - Installer: `mod/install-server.sh` pulls the latest release from GitHub, extracts into server directory, configures `com.jimbrighter.bukeperrymod.cfg`, and injects Doorstop environment variables into `valheim.service`.
+
+### 6. `.github/workflows/`
+- `main.yml`: Auto-deploys all stacks via AWS CDK on push to `main` using GitHub OIDC role. Creates GitHub releases via `jim-brighter/github-release-action`. Packages `bukeperry-server-bundle.zip` and uploads to release assets. Dynamically checks Thunderstore API and publishes new mod releases when `PluginVersion` is bumped.
 - `pr.yml`: Runs `cdk synth` on pull requests to validate stack synthesis.
 - `.github/dependabot.yml`: Manages weekly npm updates across `/cdk`, `/monitor-lambda`, and `/llm-lambda`.
 
