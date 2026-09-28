@@ -24,7 +24,7 @@ Establish the C# / BepInEx 5.x development environment, dependencies, build pipe
 
 ---
 
-## Epic 1: The Bukeperry Character & AI Behavior (Phase 1) 🟡
+## Epic 1: The Bukeperry Character & AI Behavior (Phase 1) 🟢
 Implement the custom Bukeperry troll prefab, unique stats, custom Dvergr-style non-hostile/retaliatory AI, and persistent world placement.
 
 - [x] **Story 1.1**: Define Bukeperry prefab & combat stats.
@@ -37,23 +37,19 @@ Implement the custom Bukeperry troll prefab, unique stats, custom Dvergr-style n
     - Normal troll hostility towards other biomes/mobs. (Completed: Verified in-game using BukeperryController and directional IsEnemy patch).
 - [x] **Story 1.3**: Implement world locator and persistent spawn.
   - *Acceptance Criteria*: On world load, scans for nearest Black Forest zone to `(0,0,0)`, spawns Bukeperry if not already present, and persists ZDO. (Completed: Procedural world scan locates closest dry Black Forest position; ZDO saved to chunk and verified persistent in-game).
-- [ ] **Story 1.4**: Bukeperry respawns after one in-game day.
-  - *Acceptance Criteria*:
-    - When Bukeperry is killed, record time of death.
-    - Respawns at his Black Forest home location after 1 in-game day (or next sunrise/cooldown).
-    - Prevents duplicate spawns across world reboots during the cooldown.
+- [~] **Story 1.4**: Bukeperry respawns after one in-game day. *(Descoped in favor of Wood Tribute Chest mechanic in Story 4.1)*.
 
 ---
 
-## Epic 2: The Troll Merchant (Phase 2)
+## Epic 2: The Troll Merchant (Phase 2) 🟢
 Implement merchant interaction on Bukeperry with custom dialogue, inventory, and purchase interception.
 
-- [ ] **Story 2.1**: Attach `Trader` component to Bukeperry.
-  - *Acceptance Criteria*: Player can press `[E]` to open the store GUI (`StoreGui`).
-- [ ] **Story 2.2**: Configure merchant inventory.
-  - *Acceptance Criteria*: Store displays Stone (cheap, e.g., 1 coin) and Wood (10,000 coins).
-- [ ] **Story 2.3**: Intercept wood purchase & trigger troll dialogue.
-  - *Acceptance Criteria*: If player buys wood, transaction is cancelled/refunded and Bukeperry displays overhead text/dialogue saying he has no wood.
+- [x] **Story 2.1**: Attach `Trader` component to Bukeperry.
+  - *Acceptance Criteria*: Player can press `[E]` to open the store GUI (`StoreGui`). (Completed: Hover text, yellow crosshair, overhead greeting, and StoreGui verified in-game).
+- [x] **Story 2.2**: Configure merchant inventory.
+  - *Acceptance Criteria*: Store displays Stone (cheap, e.g., 1 coin) and Wood (10,000 coins). (Completed: Stone @ 1 coin and Wood @ 10,000 coins configured in BukeperryPrefab).
+- [x] **Story 2.3**: Intercept wood purchase & trigger troll dialogue.
+  - *Acceptance Criteria*: If player buys wood, transaction is cancelled/refunded and Bukeperry displays overhead text/dialogue saying he has no wood. (Completed: Purchase intercepted via StoreGui patch; store closes, gold refunded, and troll refusal dialogue displayed overhead).
 
 ---
 
@@ -92,3 +88,39 @@ Connect proximity in-game chat to Bedrock LLM with shared Discord conversation s
   - *Acceptance Criteria*: Mod fires async HTTP POST with `x-api-key` off-thread; queues response back to main thread via `ConcurrentQueue` without stalling server ticks.
 - [ ] **Story 3.5**: In-game speech bubble delivery.
   - *Acceptance Criteria*: Server sends RPC to clients within visual range to display Bukeperry's overhead speech bubble (`Chat.SetNpcText`), with tuned Y-offset for visibility.
+
+---
+
+## Epic 4: Launch Activities & Distribution Tooling (Phase 4)
+Automated distribution and installation tooling for deploying the mod to Linux dedicated servers and Windows client machines.
+
+- [ ] **Story 4.1**: Compiled artifact packaging & repository tracking.
+  - *Acceptance Criteria*:
+    - Standardized build output directory (e.g. `mod/dist/BukeperryMod.dll`) committed or packaged for release.
+    - Automated check or deploy step to keep distribution binaries in sync with source builds.
+- [ ] **Story 4.2**: Headless Linux server installer (`install-server.sh`).
+  - *Acceptance Criteria*:
+    - Bash script designed for headless Linux servers (no GUI/desktop required).
+    - Auto-detects common dedicated server paths or prompts user for Valheim server directory.
+    - Verifies/installs BepInEx 5.x, JotunnLib, and BukeperryMod into `BepInEx/plugins/`.
+    - Configures server launch: ensures `start_server_bepinex.sh` is executable and prints/updates systemd `valheim.service` `ExecStart` target to launch via BepInEx.
+    - Idempotent and safe to run on existing servers without clobbering world data or server configs.
+- [ ] **Story 4.3**: Windows client installer (GUI & Auto-Detector).
+  - *Acceptance Criteria*:
+    - User-friendly Windows installer (GUI application or native PowerShell/WPF window requiring zero extra runtime installs).
+    - Automatically locates Steam Valheim install directory via Steam registry/`libraryfolders.vdf` with an override file picker/input.
+    - Downloads/installs BepInEx 5.x (if missing), JotunnLib, and BukeperryMod into `BepInEx/plugins/`.
+    - Note on Launch Options: Windows requires **zero Steam launch options** (Doorstop uses standard `winhttp.dll` hooking when `valheim.exe` starts).
+    - Validates installation and presents clear success / launch instructions to the player.
+
+---
+
+## Epic 5: Future Enhancements (Phase 5)
+Post-launch polish, fun interactions, and advanced mechanics.
+
+- [ ] **Story 5.1**: Wood Tribute Chest Respawn.
+  - *Acceptance Criteria*:
+    - When Bukeperry dies, record death and location.
+    - The next in-game day, a standard chest appears at Bukeperry's home coordinates.
+    - Bukeperry can only respawn by filling the chest completely with wood.
+    - Once full, consuming/sacrificing the wood triggers Bukeperry's respawn at his home.

@@ -20,7 +20,7 @@ namespace BukeperryMod
       {
         return;
       }
-      
+
       GameObject vanillaTroll = PrefabManager.Instance.GetPrefab("Troll");
       if (vanillaTroll == null)
       {
@@ -30,6 +30,35 @@ namespace BukeperryMod
 
       GameObject bukeperry = PrefabManager.Instance.CreateClonedPrefab(PrefabName, "Troll");
       bukeperry.AddComponent<BukeperryController>();
+
+      Trader trader = bukeperry.AddComponent<Trader>();
+      trader.m_name = "Bukeperry";
+      trader.m_hoverOffset = 3f;
+      trader.m_dialogHeight = 6f;
+      trader.m_items = [];
+
+      GameObject stonePrefab = PrefabManager.Instance.GetPrefab("Stone");
+      GameObject woodPrefab = PrefabManager.Instance.GetPrefab("Wood");
+
+      if (stonePrefab != null && stonePrefab.GetComponent<ItemDrop>() != null)
+      {
+        trader.m_items.Add(new Trader.TradeItem
+        {
+          m_prefab = stonePrefab.GetComponent<ItemDrop>(),
+          m_stack = 1,
+          m_price = 1
+        });
+      }
+
+      if (woodPrefab != null && woodPrefab.GetComponent<ItemDrop>() != null)
+      {
+        trader.m_items.Add(new Trader.TradeItem
+        {
+          m_prefab = woodPrefab.GetComponent<ItemDrop>(),
+          m_stack = 1,
+          m_price = 10000
+        });
+      }
 
       Humanoid humanoid = bukeperry.GetComponent<Humanoid>();
       humanoid.m_name = "Bukeperry";

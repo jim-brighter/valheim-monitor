@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 
 namespace BukeperryMod
 {
@@ -59,6 +60,102 @@ namespace BukeperryMod
       {
         __instance.GenerateLocationsCompleted += BukeperrySpawner.CheckAndSpawn;
       }
+    }
+
+    [HarmonyPatch(typeof(Trader), "Update")]
+    [HarmonyPrefix]
+    public static bool TraderUpdatePrefix(Trader __instance)
+    {
+      if (__instance.GetComponent<BukeperryController>() != null) return false;
+      return true;
+    }
+
+    [HarmonyPatch(typeof(Trader), "RandomTalk")]
+    [HarmonyPrefix]
+    public static bool TraderRandomTalkPrefix(Trader __instance)
+    {
+      if (__instance.GetComponent<BukeperryController>() != null) return false;
+      return true;
+    }
+
+    [HarmonyPatch(typeof(Character), nameof(Character.GetHoverText))]
+    [HarmonyPrefix]
+    public static bool TraderGetHoverTextPrefix(Character __instance, ref string __result)
+    {
+      Trader trader = __instance.GetComponent<Trader>();
+      if (trader == null) return true;
+
+      BukeperryController controller = __instance.GetComponent<BukeperryController>();
+      if (controller == null) return true;
+
+      if (Player.m_localPlayer != null && controller.IsHostileTo(Player.m_localPlayer))
+      {
+        __result = "";
+        return false;
+      }
+
+      __result = trader.GetHoverText();
+      return false;
+    }
+
+    [HarmonyPatch(typeof(Trader), nameof(Trader.Interact))]
+    [HarmonyPrefix]
+    public static bool TraderInteractPrefix(Trader __instance, Humanoid character, bool hold, ref bool __result)
+    {
+      BukeperryController controller = __instance.GetComponent<BukeperryController>();
+      if (controller == null) return true; // not Bukeperry
+
+      if (hold)
+      {
+        __result = false;
+        return false;
+      }
+
+      if (character is Player player && controller.IsHostileTo(player))
+      {
+        __result = false;
+        return false; // refuse to interact with grudge target
+      }
+
+      if (Chat.instance != null)
+      {
+        Chat.instance.SetNpcText(__instance.gameObject, Vector3.up * 2.5f, 20f, 4f, "", "bukeperry have goods. trade now.", large: false);
+      }
+
+      StoreGui.instance.Show(__instance);
+
+      __result = true;
+      return false;
+    }
+
+    [HarmonyPatch(typeof(StoreGui), "BuySelectedItem")]
+    [HarmonyPrefix]
+    public static bool BuySelectedItemPrefix(StoreGui __instance)
+    {
+      Trader trader = Traverse.Create(__instance).Field<Trader>("m_trader").Value;
+      if (trader == null || trader.GetComponent<BukeperryController>() == null) return true; // not Bukeperry
+
+      Trader.TradeItem selectedItem = Traverse.Create(__instance).Field<Trader.TradeItem>("m_selectedItem").Value;
+      if (selectedItem != null && selectedItem.m_prefab != null && selectedItem.m_prefab.name == "Wood")
+      {
+        __instance.Hide();
+
+        if (Chat.instance != null)
+        {
+          string[] refusals = [
+            "bukeperry need wood. no have extra. come back later.",
+            "my wood! you no touch tree! go away tiny viking!",
+            "10000 gold good, but wood better. troll keep wood"
+          ];
+
+          string reply = refusals[UnityEngine.Random.Range(0, refusals.Length)];
+          Chat.instance.SetNpcText(trader.gameObject, Vector3.up * 2.5f, 20f, 5f, "", reply, large: false);
+        }
+
+        return false;
+      }
+
+      return true;
     }
   }
 }
