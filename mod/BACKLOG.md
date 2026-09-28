@@ -53,7 +53,7 @@ Implement merchant interaction on Bukeperry with custom dialogue, inventory, and
 
 ---
 
-## Epic 3: The Conversationalist (Phase 3)
+## Epic 3: The Conversationalist (Phase 3) 🟡
 Connect proximity in-game chat to Bedrock LLM with shared Discord conversation state.
 
 ### 📐 Technical Architecture & Decisions:
@@ -76,11 +76,11 @@ Connect proximity in-game chat to Bedrock LLM with shared Discord conversation s
    - *Note on Troll Height*: Troll models are very tall (~6-7m). We will need to adjust the Y-offset vector on `SetNpcText` so the bubble floats near eye/chest level or is easily readable from ground camera angles.
 
 ### Stories:
-- [ ] **Story 3.1**: CDK stack updates & shared LLM core.
+- [x] **Story 3.1**: CDK stack updates & shared LLM core.
   - *Acceptance Criteria*:
-    - Refactor `llm-lambda` so Bedrock prompt, RAG retriever, and DynamoDB state logic can be called synchronously by a new `gameHandler.ts`.
-    - CDK adds `POST /game/chat` with `apiKeyRequired: true`, creates `ApiKey` and `UsagePlan`.
-- [ ] **Story 3.2**: Mod configuration file setup.
+    - Refactor `llm-lambda` so Bedrock prompt, RAG retriever, and DynamoDB state logic can be called synchronously by a new `gameHandler.ts`. (Completed: `core.ts` extracted, `gameHandler.ts` implemented and covered by unit tests).
+    - CDK adds `POST /game/chat` with `apiKeyRequired: true`, creates `ApiKey` and `UsagePlan`. (Completed: CDK stack updated, deployed, and verified with `curl`).
+- [ ] **Story 3.2**: Mod configuration file setup. 🟡
   - *Acceptance Criteria*: Mod uses `Config.Bind` to define `ApiEndpoint`, `ApiKey`, and `ChannelId`. Generates `BepInEx/config/com.bukeperry.mod.cfg` on first boot.
 - [ ] **Story 3.3**: Server-side chat sniffer & proximity check.
   - *Acceptance Criteria*: Server intercepts `Chat.RPC_ChatMessage`, checks Euclidean distance between speaking player and Bukeperry ZDO (< 20m).

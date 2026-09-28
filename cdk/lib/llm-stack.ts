@@ -1,4 +1,4 @@
-import { EndpointType, LambdaIntegration, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
+import { ApiKey, EndpointType, LambdaIntegration, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -93,6 +93,38 @@ export class ValheimLLMStack extends cdk.Stack {
     const secret = Secret.fromSecretNameV2(this, 'ValheimLLMSecret', 'valheim-monitor-secrets');
     secret.grantRead(llmLambda);
 
+    const gameLambda = new NodejsFunction(this, 'ValheimLLMGameLambda', {
+      runtime: Runtime.NODEJS_24_X,
+      handler: 'handler',
+      depsLockFilePath: '../llm-lambda/package-lock.json',
+      entry: '../llm-lambda/src/gameHandler.ts',
+      bundling: {
+        minify: true,
+        externalModules: []
+      },
+      logGroup: new LogGroup(this, 'ValheimLLMGameLogGroup', {
+        retention: RetentionDays.THREE_DAYS
+      }),
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      environment: {
+        STATE_TABLE_NAME: stateTable.tableName
+      }
+    });
+
+    stateTable.grantReadWriteData(gameLambda);
+
+    gameLambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'bedrock:InvokeModel',
+          'bedrock:InvokeModelWithResponseStream',
+          'bedrock-mantle:*',
+        ],
+        resources: ['*'],
+      })
+    );
+
     const gateway = new LambdaRestApi(this, 'ValheimLLMGateway', {
       handler: defaultErrorLambda,
       proxy: false,
@@ -108,7 +140,36 @@ export class ValheimLLMStack extends cdk.Stack {
       }
     });
 
+    // Discord interactions webhook route
     const interactions = gateway.root.addResource('interactions');
     interactions.addMethod('POST', new LambdaIntegration(llmLambda));
+
+    // Game Mod API Key and Route
+    const apiKey = new ApiKey(this, 'ValheimModApiKey', {
+      apiKeyName: 'valheim-mod-api-key',
+      description: 'API Key for Valheim Bukeperry mod to connect to LLM backend'
+    });
+
+    const usagePlan = gateway.addUsagePlan('ValheimModUsagePlan', {
+      name: 'ValheimModUsagePlan',
+      throttle: {
+        rateLimit: 5,
+        burstLimit: 10
+      },
+      apiStages: [
+        {
+          api: gateway,
+          stage: gateway.deploymentStage
+        }
+      ]
+    });
+
+    usagePlan.addApiKey(apiKey);
+
+    const game = gateway.root.addResource('game');
+    const gameChat = game.addResource('chat');
+    gameChat.addMethod('POST', new LambdaIntegration(gameLambda), {
+      apiKeyRequired: true
+    });
   }
 }

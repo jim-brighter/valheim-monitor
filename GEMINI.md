@@ -37,27 +37,28 @@ The project is structured into four main components:
 - **Runtime**: Node.js 24.x (`Runtime.NODEJS_24_X`), TypeScript, tested with Vitest.
 - **Directory Structure**:
   - `src/`:
+    - `core.ts`: Shared Bedrock LLM core (`generateBukeperryReply`), local RAG knowledge retrieval, caveman persona sanitization, and DynamoDB state management.
     - `handler.ts`: Discord interaction webhook handler (Ed25519 signature verification & deferred response).
-    - `worker.ts`: Background worker invoking Bedrock LLM and managing DynamoDB conversation state.
+    - `worker.ts`: Background worker invoking shared core and patching Discord interaction message.
+    - `gameHandler.ts`: Synchronous HTTP handler for in-game chat (`POST /game/chat`), secured by API Gateway API Key.
     - `retriever.ts`: Local RAG retrieval engine querying `data/valheim_knowledge.json`.
     - `data/valheim_knowledge.json`: Structured Valheim lore & troll knowledge base.
   - `test/`:
-    - Unit tests for handler and retriever (`handler.test.ts`, `retriever.test.ts`).
+    - Unit tests for handler, gameHandler, and retriever (`handler.test.ts`, `gameHandler.test.ts`, `retriever.test.ts`).
 - **Flow**:
-  1. API Gateway receives Discord Interaction webhook at `/interactions`.
-  2. `handler.ts` verifies Ed25519 request signature with `discord-interactions` using `public_key` from Secrets Manager.
-  3. Slash command routing:
-     - `/bukeperry`: `handler.ts` immediately returns `DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE` (Type 5) to satisfy Discord's strict 3-second timeout, while asynchronously invoking `worker.ts` (`InvocationType: 'Event'`).
-     - `/bukeperry-reset`: `handler.ts` deletes the channel's entry from DynamoDB `ValheimLLMStateTable` and immediately returns `CHANNEL_MESSAGE_WITH_SOURCE` (Type 4) with a caveman reset confirmation.
-  4. `worker.ts` retrieves relevant Valheim knowledge using `retriever.ts` and loads past conversation state (`lastResponseId`) from DynamoDB `ValheimLLMStateTable`.
-  5. `worker.ts` invokes AWS Bedrock model (`DEFAULT_BEDROCK_MODEL_ID`, default: `google.gemma-4-31b`) via the `@aws/bedrock-token-generator` and `openai` client.
-  6. Response is sanitized (enforces lowercase caveman troll persona, strips stage directions/asterisks) and posted to Discord by patching the original interaction token (`PATCH /webhooks/<app_id>/<token>/messages/@original`).
-  7. New response ID is saved to DynamoDB with a 30-day TTL for conversation continuity.
+  1. **Discord Path**:
+     - API Gateway receives Discord Interaction webhook at `/interactions`.
+     - `handler.ts` verifies Ed25519 signature, returns deferred response (Type 5), invokes `worker.ts` asynchronously.
+     - `worker.ts` calls `generateBukeperryReply` in `core.ts` and patches Discord interaction original message.
+  2. **In-Game Chat Path**:
+     - Game server / client sends `POST /game/chat` with `x-api-key` header and JSON body `{ prompt, channelId? }`.
+     - API Gateway validates API Key against `ValheimModUsagePlan` at the edge (rejects unauthorized with 403).
+     - `gameHandler.ts` validates payload, calls `generateBukeperryReply(prompt, channelId)` synchronously, and returns `{ reply }` with status 200.
 
 ### 4. `cdk/`
 - **Entrypoint**: `bin/cdk.ts` instantiates:
   - `ValheimMonitorStack` (`lib/cdk-stack.ts`): DynamoDB table `ValheimMonitorTable`, `ValheimMonitorLambda`, EventBridge rule, Secrets Manager read policy.
-  - `ValheimLLMStack` (`lib/llm-stack.ts`): DynamoDB state table `ValheimLLMStateTable`, `ValheimLLMWorkerLambda`, `ValheimLLMLambda`, REST API Gateway (`ValheimLLMGateway`), Secrets Manager read policy, Bedrock IAM permissions.
+  - `ValheimLLMStack` (`lib/llm-stack.ts`): DynamoDB state table `ValheimLLMStateTable`, `ValheimLLMWorkerLambda`, `ValheimLLMLambda`, `ValheimLLMGameLambda`, REST API Gateway (`ValheimLLMGateway`) with routes `/interactions` and `/game/chat`, `ValheimModApiKey`, `ValheimModUsagePlan`, Secrets Manager read policy, Bedrock IAM permissions.
 
 ### 5. `.github/workflows/`
 - `main.yml`: Auto-deploys all stacks via AWS CDK on push to `main` using GitHub OIDC role. Creates GitHub releases via `jim-brighter/github-release-action`.
