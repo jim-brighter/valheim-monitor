@@ -92,26 +92,22 @@ Connect proximity in-game chat to Bedrock LLM with shared Discord conversation s
 ---
 
 ## Epic 4: Launch Activities & Distribution Tooling (Phase 4)
-Automated distribution and installation tooling for deploying the mod to Linux dedicated servers and Windows client machines.
+Automated distribution and installation tooling for deploying the mod to Linux dedicated servers and Windows/Mac client machines.
 
-- [ ] **Story 4.1**: Compiled artifact packaging & repository tracking.
+- [x] **Story 4.1**: Compiled artifact packaging & repository tracking.
   - *Acceptance Criteria*:
-    - Standardized build output directory (e.g. `mod/dist/BukeperryMod.dll`) committed or packaged for release.
-    - Automated check or deploy step to keep distribution binaries in sync with source builds.
-- [ ] **Story 4.2**: Headless Linux server installer (`install-server.sh`).
+    - Standardized build output directory (`mod/dist/BukeperryMod.dll`) committed and tracked.
+    - Local deploy script (`macos-deploy.sh`) automatically syncs built `.dll` into `mod/dist/`. (Completed: `mod/dist/BukeperryMod.dll` compiled and tracked).
+- [x] **Story 4.2**: Headless Linux server installer (`install-server.sh`) & Server Bundle Packaging.
   - *Acceptance Criteria*:
-    - Bash script designed for headless Linux servers (no GUI/desktop required).
-    - Auto-detects common dedicated server paths or prompts user for Valheim server directory.
-    - Verifies/installs BepInEx 5.x, JotunnLib, and BukeperryMod into `BepInEx/plugins/`.
-    - Configures server launch: ensures `start_server_bepinex.sh` is executable and prints/updates systemd `valheim.service` `ExecStart` target to launch via BepInEx.
-    - Idempotent and safe to run on existing servers without clobbering world data or server configs.
-- [ ] **Story 4.3**: Windows client installer (GUI & Auto-Detector).
+    - Automated bundler script (`mod/package-server-bundle.sh`) packages pinned `denikson/BepInExPack_Valheim` 5.4.2351, `ValheimModding/Jotunn` 2.30.2, and `BukeperryMod.dll` into `bukeperry-server-bundle.zip`.
+    - Standalone installer (`mod/install-server.sh`) pulls latest bundle from GitHub Releases, extracts to `/home/vhserver/valheim_server`, prompts/configures API Gateway endpoint and key in `com.jimbrighter.bukeperrymod.cfg`.
+    - Detects `valheim.service` and injects Doorstop environment variables (`DOORSTOP_ENABLED=1`, `LD_PRELOAD`, `LD_LIBRARY_PATH`). (Completed: Both scripts implemented, tested, and validated).
+- [x] **Story 4.3**: Client Distribution via Thunderstore / r2modman & CI Automation.
   - *Acceptance Criteria*:
-    - User-friendly Windows installer (GUI application or native PowerShell/WPF window requiring zero extra runtime installs).
-    - Automatically locates Steam Valheim install directory via Steam registry/`libraryfolders.vdf` with an override file picker/input.
-    - Downloads/installs BepInEx 5.x (if missing), JotunnLib, and BukeperryMod into `BepInEx/plugins/`.
-    - Note on Launch Options: Windows requires **zero Steam launch options** (Doorstop uses standard `winhttp.dll` hooking when `valheim.exe` starts).
-    - Validates installation and presents clear success / launch instructions to the player.
+    - Automated package creation with 256x256 icon (`mod/thunderstore/icon.png`), descriptive `README.md`, and dynamic `manifest.json` with dependencies (`denikson-BepInExPack_Valheim-5.4.2351`, `ValheimModding-Jotunn-2.30.2`).
+    - CI publication script (`mod/thunderstore/publish.sh`) uses `tcli` and `THUNDERSTORE_TOKEN` in `.github/workflows/main.yml`.
+    - Single source of truth: automatically reads `PluginVersion` from `BukeperryPlugin.cs`, checks Thunderstore API to skip unchanged versions, requiring zero manual manifest version bumps. (Completed: Package assets, publish script, and GitHub Actions workflow implemented and verified).
 
 ---
 
@@ -124,3 +120,15 @@ Post-launch polish, fun interactions, and advanced mechanics.
     - The next in-game day, a standard chest appears at Bukeperry's home coordinates.
     - Bukeperry can only respawn by filling the chest completely with wood.
     - Once full, consuming/sacrificing the wood triggers Bukeperry's respawn at his home.
+- [ ] **Story 5.2**: Retaliation Combat Banter on Player Attack.
+  - *Acceptance Criteria*:
+    - When a player strikes Bukeperry (`Character.Damage` / `OnAttackedBy`), trigger a background LLM prompt alerting Bukeperry (e.g. `"[COMBAT]: <PlayerName> attacked you!"`).
+    - Persona guardrail: Bukeperry responds with proud, swaggering brute combat dialogue ("so you think you can fight me? tiny viking squish under log!"), with zero fear or sadness while charging to 1-shot the attacker.
+    - Delivers overhead speech bubble via `bukeperry.Speak(...)` with cooldown/debounce to prevent attack-spamming the API.
+- [ ] **Story 5.3**: Cross-Platform Player Identity & Nickname Mapping.
+  - *Acceptance Criteria*:
+    - Update client and Discord payloads to send caller IDs:
+      - Game mod sends player Steam ID / Platform ID (`UserInfo.UserId`) and character name.
+      - Discord interaction handler passes Discord user ID and username.
+    - Backend maintains a mapping config/store (Steam ID / Discord ID -> canonical nickname, e.g. `"jim"`).
+    - Format prompt input in `core.ts` with resolved nickname (e.g. `"[<nickname>]: <message>"`), enabling Bukeperry to recognize who is speaking across Discord and in-game.

@@ -16,4 +16,8 @@ echo "Installing BukeperryMod.dll to local Valheim..."
 mkdir -p "$VALHEIM_PLUGINS"
 cp bin/Debug/netstandard2.1/BukeperryMod.dll "$VALHEIM_PLUGINS/"
 
+echo "Copying BukeperryMod.dll to mod/dist for repository distribution..."
+mkdir -p "$SCRIPT_DIR/dist"
+cp bin/Debug/netstandard2.1/BukeperryMod.dll "$SCRIPT_DIR/dist/"
+
 echo "Done"

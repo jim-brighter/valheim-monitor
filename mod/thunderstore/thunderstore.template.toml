@@ -1,0 +1,30 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "jimbrighter"
+name = "BukeperryMod"
+versionNumber = "__VERSION__"
+description = "Bukeperry the Cave Troll merchant and conversational companion for Valheim."
+websiteUrl = "https://github.com/jim-brighter/valheim-monitor"
+containsNsfwContent = false
+
+[package.dependencies]
+denikson-BepInExPack_Valheim = "5.4.2351"
+ValheimModding-Jotunn = "2.30.2"
+
+[build]
+icon = "./icon.png"
+readme = "./README.md"
+outdir = "./build"
+
+[[build.copy]]
+source = "./BukeperryMod.dll"
+target = ""
+
+[publish]
+repository = "https://thunderstore.io"
+communities = [ "valheim" ]
+
+[publish.categories]
+valheim = [ "npcs", "mods" ]
