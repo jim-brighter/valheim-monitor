@@ -80,9 +80,9 @@ Connect proximity in-game chat to Bedrock LLM with shared Discord conversation s
   - *Acceptance Criteria*:
     - Refactor `llm-lambda` so Bedrock prompt, RAG retriever, and DynamoDB state logic can be called synchronously by a new `gameHandler.ts`. (Completed: `core.ts` extracted, `gameHandler.ts` implemented and covered by unit tests).
     - CDK adds `POST /game/chat` with `apiKeyRequired: true`, creates `ApiKey` and `UsagePlan`. (Completed: CDK stack updated, deployed, and verified with `curl`).
-- [ ] **Story 3.2**: Mod configuration file setup. 🟡
-  - *Acceptance Criteria*: Mod uses `Config.Bind` to define `ApiEndpoint`, `ApiKey`, and `ChannelId`. Generates `BepInEx/config/com.bukeperry.mod.cfg` on first boot.
-- [ ] **Story 3.3**: Server-side chat sniffer & proximity check.
+- [x] **Story 3.2**: Mod configuration file setup.
+  - *Acceptance Criteria*: Mod uses `Config.Bind` to define `ApiEndpoint`, `ApiKey`, and `ChannelId`. Generates `BepInEx/config/com.jimbrighter.bukeperrymod.cfg` on first boot. (Completed: Config entries bound and verified generated).
+- [ ] **Story 3.3**: Server-side chat sniffer & proximity check. 🟡
   - *Acceptance Criteria*: Server intercepts `Chat.RPC_ChatMessage`, checks Euclidean distance between speaking player and Bukeperry ZDO (< 20m).
 - [ ] **Story 3.4**: Async HTTP client & main-thread dispatcher.
   - *Acceptance Criteria*: Mod fires async HTTP POST with `x-api-key` off-thread; queues response back to main thread via `ConcurrentQueue` without stalling server ticks.
