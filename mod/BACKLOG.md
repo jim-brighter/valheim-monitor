@@ -53,7 +53,7 @@ Implement merchant interaction on Bukeperry with custom dialogue, inventory, and
 
 ---
 
-## Epic 3: The Conversationalist (Phase 3) 🟡
+## Epic 3: The Conversationalist (Phase 3) 🟢
 Connect proximity in-game chat to Bedrock LLM with shared Discord conversation state.
 
 ### 📐 Technical Architecture & Decisions:
@@ -82,12 +82,12 @@ Connect proximity in-game chat to Bedrock LLM with shared Discord conversation s
     - CDK adds `POST /game/chat` with `apiKeyRequired: true`, creates `ApiKey` and `UsagePlan`. (Completed: CDK stack updated, deployed, and verified with `curl`).
 - [x] **Story 3.2**: Mod configuration file setup.
   - *Acceptance Criteria*: Mod uses `Config.Bind` to define `ApiEndpoint`, `ApiKey`, and `ChannelId`. Generates `BepInEx/config/com.jimbrighter.bukeperrymod.cfg` on first boot. (Completed: Config entries bound and verified generated).
-- [ ] **Story 3.3**: Server-side chat sniffer & proximity check. 🟡
-  - *Acceptance Criteria*: Server intercepts `Chat.RPC_ChatMessage`, checks Euclidean distance between speaking player and Bukeperry ZDO (< 20m).
-- [ ] **Story 3.4**: Async HTTP client & main-thread dispatcher.
-  - *Acceptance Criteria*: Mod fires async HTTP POST with `x-api-key` off-thread; queues response back to main thread via `ConcurrentQueue` without stalling server ticks.
-- [ ] **Story 3.5**: In-game speech bubble delivery.
-  - *Acceptance Criteria*: Server sends RPC to clients within visual range to display Bukeperry's overhead speech bubble (`Chat.SetNpcText`), with tuned Y-offset for visibility.
+- [x] **Story 3.3**: Server-side chat sniffer & proximity check.
+  - *Acceptance Criteria*: Server intercepts `Chat.RPC_ChatMessage` and `Talker.RPC_Say`, checks Euclidean distance between speaking player and Bukeperry (< 20m). (Completed: Both shout and proximity chat intercepted and verified with in-game distance checks).
+- [x] **Story 3.4**: Async HTTP client & main-thread dispatcher.
+  - *Acceptance Criteria*: Mod fires async HTTP POST with `x-api-key` off-thread; queues response back to main thread via `ConcurrentQueue` without stalling server ticks. (Completed: `BukeperryChatClient` executes `HttpClient` off-thread, marshals responses via `ConcurrentQueue` to `BukeperryPlugin.Update()`).
+- [x] **Story 3.5**: In-game speech bubble delivery.
+  - *Acceptance Criteria*: Server sends RPC to clients within visual range to display Bukeperry's overhead speech bubble (`Chat.SetNpcText`), with tuned Y-offset for visibility. (Completed: Routed RPC `BukeperrySpeechRPC` delivers speech bubble at eye/chest level `Vector3.up * 2.5f` and logs to chat window).
 
 ---
 

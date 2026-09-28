@@ -157,5 +157,64 @@ namespace BukeperryMod
 
       return true;
     }
+
+    [HarmonyPatch(typeof(Talker), "RPC_Say")]
+    [HarmonyPrefix]
+    public static void RPC_SayPrefix(Talker __instance, long sender, int ctype, UserInfo user, string text)
+    {
+      if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
+      if (__instance == null) return;
+
+      ProcessChatMessage(__instance.transform.position, ctype, user, text);
+    }
+
+    [HarmonyPatch(typeof(Chat), "RPC_ChatMessage")]
+    [HarmonyPrefix]
+    public static void RPC_ChatMessagePrefix(long sender, Vector3 position, int type, UserInfo userInfo, string text)
+    {
+      // Only server/host handles chat sniffing
+      if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
+
+      ProcessChatMessage(position, type, userInfo, text);
+    }
+
+    private static void ProcessChatMessage(Vector3 position, int type, UserInfo userInfo, string text)
+    {
+      // Ignore non-chat, empty text, slash commands
+      if (type == (int)Talker.Type.Ping || string.IsNullOrWhiteSpace(text)) return;
+      if (text.StartsWith("/")) return;
+
+      // Proximity check
+      float maxDist = BukeperryPlugin.ProximityRadiusConfig?.Value ?? 20.0f;
+      foreach (var bukeperry in BukeperryController.Instances)
+      {
+        if (bukeperry == null || bukeperry.Humanoid == null || bukeperry.Humanoid.IsDead()) continue;
+
+        float distance = Vector3.Distance(position, bukeperry.transform.position);
+        if (distance <= maxDist)
+        {
+          string speakerName = userInfo?.Name ?? "Viking";
+          BukeperryPlugin.Log.LogInfo($"Bukeperry overheard {speakerName} ({distance:F1}m away): \"{text}\"");
+
+          BukeperryChatClient.SendPrompt(text, reply =>
+          {
+            BukeperryPlugin.Log.LogInfo($"[Bukeperry Reply - Main Thread]: \"{reply}\"");
+            bukeperry.Speak(reply);
+          });
+
+          break;
+        }
+      }
+    }
+
+    [HarmonyPatch(typeof(ZNet), "Awake")]
+    [HarmonyPostfix]
+    public static void ZNetAwakePostfix()
+    {
+      if (ZRoutedRpc.instance != null)
+      {
+        ZRoutedRpc.instance.Register<ZDOID, string>("BukeperrySpeechRPC", BukeperryController.OnBukeperrySpeechRPC);
+      }
+    }
   }
 }

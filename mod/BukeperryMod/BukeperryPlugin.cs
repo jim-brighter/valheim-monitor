@@ -61,5 +61,20 @@ namespace BukeperryMod
 
             Harmony.CreateAndPatchAll(typeof(BukeperryPlugin).Assembly, PluginGUID);
         }
+
+        private void Update()
+        {
+            while (BukeperryChatClient.MainThreadQueue.TryDequeue(out var action))
+            {
+                try
+                {
+                    action?.Invoke();
+                }
+                catch (System.Exception ex)
+                {
+                    Log.LogError($"Error in main thread dispatcher: {ex}");
+                }
+            }
+        }
     }
 }

@@ -6,6 +6,8 @@ namespace BukeperryMod
 {
   public class BukeperryController : MonoBehaviour
   {
+    public static readonly List<BukeperryController> Instances = [];
+
     public Humanoid Humanoid { get; private set; }
     public MonsterAI MonsterAI { get; private set; }
 
@@ -13,8 +15,14 @@ namespace BukeperryMod
 
     private void Awake()
     {
+      Instances.Add(this);
       Humanoid = GetComponent<Humanoid>();
       MonsterAI = GetComponent<MonsterAI>();
+    }
+
+    private void OnDestroy()
+    {
+      Instances.Remove(this);
     }
 
     private void Update()
@@ -67,6 +75,46 @@ namespace BukeperryMod
     {
       if (player == null) return false;
       return m_hostilePlayerIDs.Contains(player.GetPlayerID());
+    }
+
+    public void Speak(string text)
+    {
+      if (string.IsNullOrWhiteSpace(text)) return;
+
+      ZDOID zdoid = ZDOID.None;
+      if (TryGetComponent<ZNetView>(out var nview) && nview.GetZDO() != null)
+      {
+        zdoid = nview.GetZDO().m_uid;
+      }
+
+      if (ZRoutedRpc.instance != null)
+      {
+        ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "BukeperrySpeechRPC", zdoid, text);
+      }
+      else if (Chat.instance != null)
+      {
+        Chat.instance.SetNpcText(gameObject, Vector3.up * 2.5f, 25f, 7f, "", text, large: false);
+      }
+    }
+
+    public static void OnBukeperrySpeechRPC(long sender, ZDOID zdoid, string text)
+    {
+      GameObject bukeperryGo = null;
+      if (ZNetScene.instance != null && zdoid != ZDOID.None)
+      {
+        bukeperryGo = ZNetScene.instance.FindInstance(zdoid);
+      }
+
+      if (bukeperryGo == null && Instances.Count > 0)
+      {
+        bukeperryGo = Instances[0].gameObject;
+      }
+
+      if (bukeperryGo != null && Chat.instance != null)
+      {
+        Chat.instance.SetNpcText(bukeperryGo, Vector3.up * 2.5f, 25f, 7f, "", text, large: false);
+        Chat.instance.AddString($"<color=#5599ff>Bukeperry</color>: {text}");
+      }
     }
   }
 }
