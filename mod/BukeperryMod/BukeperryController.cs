@@ -15,9 +15,33 @@ namespace BukeperryMod
 
     private void Awake()
     {
+      if (Instances.Count > 0 && ZNet.instance != null && ZNet.instance.IsServer())
+      {
+        BukeperryPlugin.Log.LogWarning("Duplicate Bukeperry detected! Destroying extra instance.");
+        if (TryGetComponent<ZNetView>(out var nview) && nview.GetZDO() != null)
+        {
+          nview.ClaimOwnership();
+          nview.Destroy();
+        }
+        else
+        {
+          Destroy(gameObject);
+        }
+        return;
+      }
+
       Instances.Add(this);
       Humanoid = GetComponent<Humanoid>();
       MonsterAI = GetComponent<MonsterAI>();
+
+      // Self-heal: If loaded from a glitched save where Y position was falling, snap to terrain
+      if (ZoneSystem.instance != null && ZoneSystem.instance.FindFloor(transform.position, out float floorY))
+      {
+        if (transform.position.y < floorY - 1f || transform.position.y > floorY + 50f)
+        {
+          transform.position = new Vector3(transform.position.x, floorY, transform.position.z);
+        }
+      }
     }
 
     private void OnDestroy()
@@ -50,8 +74,11 @@ namespace BukeperryMod
 
         if (m_hostilePlayerIDs.Count == 0)
         {
-          Traverse.Create(MonsterAI).Field<Character>("m_targetCreature").Value = null;
-          Traverse.Create(MonsterAI).Field<bool>("m_alerted").Value = false;
+          if (MonsterAI != null)
+          {
+            Traverse.Create(MonsterAI).Field<Character>("m_targetCreature").Value = null;
+            Traverse.Create(MonsterAI).Field<bool>("m_alerted").Value = false;
+          }
           BukeperryPlugin.Log.LogInfo("All attackers dead. Bukeperry is chill again.");
         }
       }
@@ -64,11 +91,14 @@ namespace BukeperryMod
       long playerID = player.GetPlayerID();
       if (m_hostilePlayerIDs.Add(playerID))
       {
-        BukeperryPlugin.Log.LogInfo($"Bukeperry attached by {player.GetPlayerName()}! Entering rage mode.");
+        BukeperryPlugin.Log.LogInfo($"Bukeperry attacked by {player.GetPlayerName()}! Entering rage mode.");
       }
 
-      Traverse.Create(MonsterAI).Method("SetTarget", player).GetValue();
-      MonsterAI.Alert();
+      if (MonsterAI != null)
+      {
+        Traverse.Create(MonsterAI).Method("SetTarget", player).GetValue();
+        MonsterAI.Alert();
+      }
     }
 
     public bool IsHostileTo(Player player)

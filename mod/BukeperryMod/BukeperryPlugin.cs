@@ -79,7 +79,7 @@ namespace BukeperryMod
                 }
             }
 
-            // Fallback spawner check for dedicated servers and preexisting worlds
+            // Lazy proximity spawner check: polls until a player approaches Bukeperry's grove
             if (!_spawnCheckDone && ZNet.instance != null && ZNet.instance.IsServer() && ZoneSystem.instance != null && WorldGenerator.instance != null)
             {
                 _spawnTimer += UnityEngine.Time.deltaTime;
@@ -89,7 +89,7 @@ namespace BukeperryMod
                     if (ZoneSystem.instance.GetGlobalKey(BukeperrySpawner.GlobalKeyName))
                     {
                         _spawnCheckDone = true;
-                        Log.LogInfo("Bukeperry global key found. Spawn check complete.");
+                        Log.LogInfo("Bukeperry already active in world. Proximity spawner polling complete.");
                     }
                     else
                     {
