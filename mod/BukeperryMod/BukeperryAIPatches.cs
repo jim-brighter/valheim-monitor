@@ -151,27 +151,63 @@ namespace BukeperryMod
       return true;
     }
 
+    [HarmonyPatch(typeof(Chat), nameof(Chat.SendText))]
+    [HarmonyPrefix]
+    public static void SendTextPrefix(Talker.Type type, string text)
+    {
+      if (string.IsNullOrWhiteSpace(text)) return;
+      if (type == Talker.Type.Ping) return;
+
+      if (Player.m_localPlayer != null)
+      {
+        Vector3 playerPos = Player.m_localPlayer.transform.position;
+        string playerName = Player.m_localPlayer.GetPlayerName();
+
+        BukeperryPlugin.Log.LogInfo($"[Chat Sent] {playerName} ({type}): \"{text}\"");
+
+        if (ZNet.instance != null && !ZNet.instance.IsServer() && ZRoutedRpc.instance != null)
+        {
+          ZNetPeer serverPeer = ZNet.instance.GetServerPeer();
+          if (serverPeer != null)
+          {
+            ZRoutedRpc.instance.InvokeRoutedRPC(serverPeer.m_uid, "BukeperryPlayerChatRPC", playerPos, (int)type, text, playerName);
+          }
+        }
+        else if (ZNet.instance != null && ZNet.instance.IsServer())
+        {
+          ProcessChatMessage(playerPos, (int)type, playerName, text);
+        }
+      }
+    }
+
     [HarmonyPatch(typeof(Talker), "RPC_Say")]
     [HarmonyPrefix]
     public static void RPC_SayPrefix(Talker __instance, long sender, int ctype, UserInfo user, string text)
     {
-      if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
       if (__instance == null) return;
-
-      ProcessChatMessage(__instance.transform.position, ctype, user, text);
+      if (ZNet.instance != null && ZNet.instance.IsServer())
+      {
+        ProcessChatMessage(__instance.transform.position, ctype, user?.Name ?? "Player", text);
+      }
     }
 
     [HarmonyPatch(typeof(Chat), "RPC_ChatMessage")]
     [HarmonyPrefix]
     public static void RPC_ChatMessagePrefix(long sender, Vector3 position, int type, UserInfo userInfo, string text)
     {
-      // Only server/host handles chat sniffing
-      if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
-
-      ProcessChatMessage(position, type, userInfo, text);
+      if (ZNet.instance != null && ZNet.instance.IsServer())
+      {
+        ProcessChatMessage(position, type, userInfo?.Name ?? "Player", text);
+      }
     }
 
-    private static void ProcessChatMessage(Vector3 position, int type, UserInfo userInfo, string text)
+    public static void OnBukeperryPlayerChatRPC(long sender, Vector3 position, int type, string text, string speakerName)
+    {
+      BukeperryPlugin.Log.LogInfo($"[Server RPC] Received chat from {speakerName} ({position}): \"{text}\"");
+      ProcessChatMessage(position, type, speakerName, text);
+    }
+
+    private static void ProcessChatMessage(Vector3 position, int type, string speakerName, string text)
     {
       // Ignore non-chat, empty text, slash commands
       if (type == (int)Talker.Type.Ping || string.IsNullOrWhiteSpace(text)) return;
@@ -179,15 +215,23 @@ namespace BukeperryMod
       string trimmed = text.Trim();
       if (trimmed.Equals("!bukeperry", System.StringComparison.OrdinalIgnoreCase) || trimmed.Equals("!spawn_bukeperry", System.StringComparison.OrdinalIgnoreCase))
       {
-        BukeperryPlugin.Log.LogInfo($"Manual Bukeperry spawn check requested via chat by {userInfo?.Name ?? "Player"}");
+        BukeperryPlugin.Log.LogInfo($"Manual Bukeperry spawn check requested via chat by {speakerName}");
         BukeperrySpawner.CheckAndSpawn();
         return;
       }
 
       if (text.StartsWith("/")) return;
 
-      // Proximity check
-      float maxDist = BukeperryPlugin.ProximityRadiusConfig?.Value ?? 20.0f;
+      // Distance check: normal chat uses ProximityRadius (default 20m), shout (/s) reaches up to 70m
+      float baseRadius = BukeperryPlugin.ProximityRadiusConfig?.Value ?? 20.0f;
+      float maxDist = (type == (int)Talker.Type.Shout) ? Mathf.Max(baseRadius, 70.0f) : baseRadius;
+
+      if (BukeperryController.Instances.Count == 0)
+      {
+        BukeperryPlugin.Log.LogWarning($"[Chat Check] No active Bukeperry instances loaded on server to hear {speakerName}.");
+        return;
+      }
+
       foreach (var bukeperry in BukeperryController.Instances)
       {
         if (bukeperry == null || bukeperry.Humanoid == null || bukeperry.Humanoid.IsDead()) continue;
@@ -195,8 +239,8 @@ namespace BukeperryMod
         float distance = Vector3.Distance(position, bukeperry.transform.position);
         if (distance <= maxDist)
         {
-          string speakerName = userInfo?.Name ?? "Viking";
-          BukeperryPlugin.Log.LogInfo($"Bukeperry overheard {speakerName} ({distance:F1}m away): \"{text}\"");
+          string chatTypeStr = (type == (int)Talker.Type.Shout) ? "shout" : "chat";
+          BukeperryPlugin.Log.LogInfo($"Bukeperry overheard {speakerName}'s {chatTypeStr} ({distance:F1}m away, max {maxDist:F0}m): \"{text}\"");
 
           BukeperryChatClient.SendPrompt(text, reply =>
           {
@@ -205,6 +249,10 @@ namespace BukeperryMod
           });
 
           break;
+        }
+        else
+        {
+          BukeperryPlugin.Log.LogInfo($"[Chat Check] {speakerName} spoke, but Bukeperry is too far away ({distance:F1}m > {maxDist:F1}m).");
         }
       }
     }
@@ -216,6 +264,7 @@ namespace BukeperryMod
       if (ZRoutedRpc.instance != null)
       {
         ZRoutedRpc.instance.Register<ZDOID, string>("BukeperrySpeechRPC", BukeperryController.OnBukeperrySpeechRPC);
+        ZRoutedRpc.instance.Register<Vector3, int, string, string>("BukeperryPlayerChatRPC", OnBukeperryPlayerChatRPC);
       }
     }
   }
