@@ -52,8 +52,7 @@ namespace BukeperryMod
     {
       if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
 
-      BukeperrySpawner.CheckAndSpawn();
-      __instance.GenerateLocationsCompleted += BukeperrySpawner.CheckAndSpawn;
+      BukeperrySpawner.LogMarkedLocation();
     }
 
     [HarmonyPatch(typeof(Trader), "Update")]

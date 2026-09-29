@@ -69,6 +69,7 @@ namespace BukeperryMod
       {
         monsterAI.m_aggravatable = true;
         monsterAI.m_avoidWater = true;
+        monsterAI.m_randomMoveRange = 15f;
       }
 
       GameObject vanillaLogItem = null;
