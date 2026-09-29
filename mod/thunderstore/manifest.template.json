@@ -1,0 +1,10 @@
+{
+  "name": "BukeperryMod",
+  "version_number": "__VERSION__",
+  "website_url": "https://github.com/jim-brighter/valheim-monitor",
+  "description": "Bukeperry the Troll merchant and conversational companion for Valheim.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2351",
+    "ValheimModding-Jotunn-2.30.2"
+  ]
+}
