@@ -13,7 +13,7 @@ namespace BukeperryMod
     {
         public const string PluginGUID = "com.jimbrighter.bukeperrymod";
         public const string PluginName = "BukeperryMod";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "0.1.2";
 
         internal static ManualLogSource Log;
 
