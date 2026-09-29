@@ -272,6 +272,8 @@ for loc in "${SERVICE_LOCATIONS[@]}"; do
 done
 
 DOORSTOP_ENV_LINES=(
+  "Environment=\"BOX64_PATH=.:bin:/usr/local/bin:/usr/bin\""
+  "Environment=\"BOX64_LD_LIBRARY_PATH=$SERVER_DIR/doorstop_libs:$SERVER_DIR/linux64:\$LD_LIBRARY_PATH\""
   "Environment=\"DOORSTOP_ENABLED=1\""
   "Environment=\"DOORSTOP_TARGET_ASSEMBLY=$SERVER_DIR/BepInEx/core/BepInEx.Preloader.dll\""
   "Environment=\"LD_LIBRARY_PATH=$SERVER_DIR/doorstop_libs:$SERVER_DIR/linux64:\$LD_LIBRARY_PATH\""
@@ -281,11 +283,11 @@ DOORSTOP_ENV_LINES=(
 if [[ -n "$FOUND_SERVICE" ]]; then
   echo -e "Found systemd service file: ${BOLD}$FOUND_SERVICE${NC}"
   
-  # Check if Doorstop is already present
-  if grep -q "DOORSTOP_ENABLED=1" "$FOUND_SERVICE" && grep -q "libdoorstop_x64.so" "$FOUND_SERVICE"; then
-    echo -e "${GREEN}✓ Doorstop environment variables are already configured in $FOUND_SERVICE.${NC}"
+  # Check if Doorstop and Box64 env vars are already present
+  if grep -q "DOORSTOP_ENABLED=1" "$FOUND_SERVICE" && grep -q "BOX64_PATH" "$FOUND_SERVICE"; then
+    echo -e "${GREEN}✓ Doorstop and Box64 environment variables are already configured in $FOUND_SERVICE.${NC}"
   else
-    echo -e "${YELLOW}Doorstop is NOT yet enabled in $FOUND_SERVICE.${NC}"
+    echo -e "${YELLOW}Doorstop / Box64 environment is NOT yet fully configured in $FOUND_SERVICE.${NC}"
     echo -e "To enable BepInEx mods, add these lines to the [Service] section of your service file:\n"
     for line in "${DOORSTOP_ENV_LINES[@]}"; do
       echo -e "  ${BLUE}$line${NC}"
@@ -307,12 +309,8 @@ if [[ -n "$FOUND_SERVICE" ]]; then
       cp "$FOUND_SERVICE" "$FOUND_SERVICE.bak"
       
       # Inject right after [Service]
-      awk -v d1="${DOORSTOP_ENV_LINES[0]}" \
-          -v d2="${DOORSTOP_ENV_LINES[1]}" \
-          -v d3="${DOORSTOP_ENV_LINES[2]}" \
-          -v d4="${DOORSTOP_ENV_LINES[3]}" \
-          '/^\[Service\]/ { print; print d1; print d2; print d3; print d4; next }1' \
-          "$FOUND_SERVICE.bak" > "$FOUND_SERVICE"
+      ENV_BLOCK=$(printf "%s\n" "${DOORSTOP_ENV_LINES[@]}")
+      awk -v block="$ENV_BLOCK" '/^\[Service\]/ { print; print block; next }1' "$FOUND_SERVICE.bak" > "$FOUND_SERVICE"
       
       echo -e "${GREEN}✓ Injected Doorstop environment variables into $FOUND_SERVICE (backup saved as .bak).${NC}"
 
