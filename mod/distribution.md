@@ -64,7 +64,7 @@ We implement a tailored two-pronged distribution strategy:
   - Fetches the latest release asset from GitHub.
   - Extracts bundle directly into `/home/vhserver/valheim_server` (or custom `-d` directory).
   - Prompts for or accepts `-e <endpoint>` and `-k <key>` for AWS Bedrock API Gateway.
-  - Automatically inspects `valheim.service`, adds Doorstop environment variables, runs `systemctl --user daemon-reload`, and prepares the server for restart.
+  - Automatically inspects `valheim.service`, adds Doorstop and Box64/ARM64 environment variables (`BOX64_PATH`, `BOX64_LD_LIBRARY_PATH`), runs `systemctl --user daemon-reload`, and prepares the server for restart.
 
 ---
 

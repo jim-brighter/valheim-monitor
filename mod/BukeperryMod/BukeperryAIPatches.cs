@@ -52,14 +52,8 @@ namespace BukeperryMod
     {
       if (ZNet.instance == null || !ZNet.instance.IsServer()) return;
 
-      if (__instance.LocationsGenerated)
-      {
-        BukeperrySpawner.CheckAndSpawn();
-      }
-      else
-      {
-        __instance.GenerateLocationsCompleted += BukeperrySpawner.CheckAndSpawn;
-      }
+      BukeperrySpawner.CheckAndSpawn();
+      __instance.GenerateLocationsCompleted += BukeperrySpawner.CheckAndSpawn;
     }
 
     [HarmonyPatch(typeof(Trader), "Update")]
@@ -182,6 +176,15 @@ namespace BukeperryMod
     {
       // Ignore non-chat, empty text, slash commands
       if (type == (int)Talker.Type.Ping || string.IsNullOrWhiteSpace(text)) return;
+
+      string trimmed = text.Trim();
+      if (trimmed.Equals("!bukeperry", System.StringComparison.OrdinalIgnoreCase) || trimmed.Equals("!spawn_bukeperry", System.StringComparison.OrdinalIgnoreCase))
+      {
+        BukeperryPlugin.Log.LogInfo($"Manual Bukeperry spawn check requested via chat by {userInfo?.Name ?? "Player"}");
+        BukeperrySpawner.CheckAndSpawn();
+        return;
+      }
+
       if (text.StartsWith("/")) return;
 
       // Proximity check

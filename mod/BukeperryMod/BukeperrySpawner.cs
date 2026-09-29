@@ -14,10 +14,20 @@ namespace BukeperryMod
         return;
       }
 
+      if (ZoneSystem.instance == null)
+      {
+        return;
+      }
+
       // Check if Bukeperry already spawned
       if (ZoneSystem.instance.GetGlobalKey(GlobalKeyName))
       {
         BukeperryPlugin.Log.LogInfo("Bukeperry already spawned in this world. Skipping spawner.");
+        return;
+      }
+
+      if (WorldGenerator.instance == null)
+      {
         return;
       }
 
