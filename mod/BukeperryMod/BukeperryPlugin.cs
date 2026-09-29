@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -62,6 +62,9 @@ namespace BukeperryMod
             Harmony.CreateAndPatchAll(typeof(BukeperryPlugin).Assembly, PluginGUID);
         }
 
+        private static bool _spawnCheckDone = false;
+        private static float _spawnTimer = 0f;
+
         private void Update()
         {
             while (BukeperryChatClient.MainThreadQueue.TryDequeue(out var action))
@@ -73,6 +76,29 @@ namespace BukeperryMod
                 catch (System.Exception ex)
                 {
                     Log.LogError($"Error in main thread dispatcher: {ex}");
+                }
+            }
+
+            // Fallback spawner check for dedicated servers and preexisting worlds
+            if (!_spawnCheckDone && ZNet.instance != null && ZNet.instance.IsServer() && ZoneSystem.instance != null && WorldGenerator.instance != null)
+            {
+                _spawnTimer += UnityEngine.Time.deltaTime;
+                if (_spawnTimer >= 2.0f)
+                {
+                    _spawnTimer = 0f;
+                    if (ZoneSystem.instance.GetGlobalKey(BukeperrySpawner.GlobalKeyName))
+                    {
+                        _spawnCheckDone = true;
+                        Log.LogInfo("Bukeperry global key found. Spawn check complete.");
+                    }
+                    else
+                    {
+                        BukeperrySpawner.CheckAndSpawn();
+                        if (ZoneSystem.instance.GetGlobalKey(BukeperrySpawner.GlobalKeyName))
+                        {
+                            _spawnCheckDone = true;
+                        }
+                    }
                 }
             }
         }
