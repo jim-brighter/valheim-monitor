@@ -180,26 +180,7 @@ namespace BukeperryMod
       }
     }
 
-    [HarmonyPatch(typeof(Talker), "RPC_Say")]
-    [HarmonyPrefix]
-    public static void RPC_SayPrefix(Talker __instance, long sender, int ctype, UserInfo user, string text)
-    {
-      if (__instance == null) return;
-      if (ZNet.instance != null && ZNet.instance.IsServer())
-      {
-        ProcessChatMessage(__instance.transform.position, ctype, user?.Name ?? "Player", text);
-      }
-    }
 
-    [HarmonyPatch(typeof(Chat), "RPC_ChatMessage")]
-    [HarmonyPrefix]
-    public static void RPC_ChatMessagePrefix(long sender, Vector3 position, int type, UserInfo userInfo, string text)
-    {
-      if (ZNet.instance != null && ZNet.instance.IsServer())
-      {
-        ProcessChatMessage(position, type, userInfo?.Name ?? "Player", text);
-      }
-    }
 
     public static void OnBukeperryPlayerChatRPC(long sender, Vector3 position, int type, string text, string speakerName)
     {
@@ -226,34 +207,27 @@ namespace BukeperryMod
       float baseRadius = BukeperryPlugin.ProximityRadiusConfig?.Value ?? 20.0f;
       float maxDist = (type == (int)Talker.Type.Shout) ? Mathf.Max(baseRadius, 70.0f) : baseRadius;
 
-      if (BukeperryController.Instances.Count == 0)
+      if (!BukeperryController.TryGetBukeperryLocation(out Vector3 bukeperryPos, out ZDOID bukeperryZDOID))
       {
-        BukeperryPlugin.Log.LogWarning($"[Chat Check] No active Bukeperry instances loaded on server to hear {speakerName}.");
+        BukeperryPlugin.Log.LogWarning($"[Chat Check] Could not locate Bukeperry in world to hear {speakerName}.");
         return;
       }
 
-      foreach (var bukeperry in BukeperryController.Instances)
+      float distance = Vector3.Distance(position, bukeperryPos);
+      if (distance <= maxDist)
       {
-        if (bukeperry == null || bukeperry.Humanoid == null || bukeperry.Humanoid.IsDead()) continue;
+        string chatTypeStr = (type == (int)Talker.Type.Shout) ? "shout" : "chat";
+        BukeperryPlugin.Log.LogInfo($"Bukeperry overheard {speakerName}'s {chatTypeStr} ({distance:F1}m away, max {maxDist:F0}m): \"{text}\"");
 
-        float distance = Vector3.Distance(position, bukeperry.transform.position);
-        if (distance <= maxDist)
+        BukeperryChatClient.SendPrompt(text, reply =>
         {
-          string chatTypeStr = (type == (int)Talker.Type.Shout) ? "shout" : "chat";
-          BukeperryPlugin.Log.LogInfo($"Bukeperry overheard {speakerName}'s {chatTypeStr} ({distance:F1}m away, max {maxDist:F0}m): \"{text}\"");
-
-          BukeperryChatClient.SendPrompt(text, reply =>
-          {
-            BukeperryPlugin.Log.LogInfo($"[Bukeperry Reply - Main Thread]: \"{reply}\"");
-            bukeperry.Speak(reply);
-          });
-
-          break;
-        }
-        else
-        {
-          BukeperryPlugin.Log.LogInfo($"[Chat Check] {speakerName} spoke, but Bukeperry is too far away ({distance:F1}m > {maxDist:F1}m).");
-        }
+          BukeperryPlugin.Log.LogInfo($"[Bukeperry Reply - Main Thread]: \"{reply}\"");
+          BukeperryController.Speak(bukeperryZDOID, reply);
+        });
+      }
+      else
+      {
+        BukeperryPlugin.Log.LogInfo($"[Chat Check] {speakerName} spoke, but Bukeperry is too far away ({distance:F1}m > {maxDist:F1}m).");
       }
     }
 

@@ -13,7 +13,7 @@ namespace BukeperryMod
 
     private static readonly HttpClient s_httpClient = new()
     {
-      Timeout = TimeSpan.FromSeconds(15)
+      Timeout = TimeSpan.FromSeconds(35)
     };
 
     private static bool s_isPending = false;
@@ -65,6 +65,11 @@ namespace BukeperryMod
           if (!response.IsSuccessStatusCode)
           {
             BukeperryPlugin.Log.LogError($"Chat API failed with HTTP {(int)response.StatusCode}: {responseBody}");
+            string fallback = ExtractReply(responseBody);
+            if (!string.IsNullOrWhiteSpace(fallback))
+            {
+              MainThreadQueue.Enqueue(() => onReply(fallback));
+            }
             return;
           }
 
@@ -73,6 +78,10 @@ namespace BukeperryMod
           {
             MainThreadQueue.Enqueue(() => onReply(reply));
           }
+        }
+        catch (OperationCanceledException)
+        {
+          BukeperryPlugin.Log.LogWarning("Bukeperry chat API request timed out (took longer than 35s).");
         }
         catch (Exception ex)
         {

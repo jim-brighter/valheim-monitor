@@ -91,7 +91,7 @@ Connect proximity in-game chat to Bedrock LLM with shared Discord conversation s
 
 ---
 
-## Epic 4: Launch Activities & Distribution Tooling (Phase 4)
+## Epic 4: Launch Activities & Distribution Tooling (Phase 4) 🟢
 Automated distribution and installation tooling for deploying the mod to Linux dedicated servers and Windows/Mac client machines.
 
 - [x] **Story 4.1**: Compiled artifact packaging & repository tracking.
