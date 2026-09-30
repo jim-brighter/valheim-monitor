@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <VALHEIM_INSTALL Condition="'$(VALHEIM_INSTALL)' == ''">$(HOME)/Library/Application Support/Steam/steamapps/common/Valheim</VALHEIM_INSTALL>
+    <VALHEIM_MANAGED>$(VALHEIM_INSTALL)/valheim.app/Contents/Resources/Data/Managed</VALHEIM_MANAGED>
+  </PropertyGroup>
+
+  <!-- Pull JotunnLib from NuGet, but disable its brittle Windows build scripts -->
+  <ItemGroup>
+    <PackageReference Include="JotunnLib" Version="2.30.2" ExcludeAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Jotunn DLL from your local NuGet cache -->
+    <Reference Include="Jotunn">
+      <HintPath>$(HOME)/.nuget/packages/jotunnlib/2.30.2/lib/net462/Jotunn.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- BepInEx and Harmony from the BepInEx pack you extracted -->
+    <Reference Include="BepInEx">
+      <HintPath>$(VALHEIM_INSTALL)/BepInEx/core/BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(VALHEIM_INSTALL)/BepInEx/core/0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- Valheim Game & Unity Assemblies from your Mac Steam install -->
+    <Reference Include="assembly_valheim">
+      <HintPath>$(VALHEIM_MANAGED)/assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_guiutils">
+      <HintPath>$(VALHEIM_MANAGED)/assembly_guiutils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils">
+      <HintPath>$(VALHEIM_MANAGED)/assembly_utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(VALHEIM_MANAGED)/UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(VALHEIM_MANAGED)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(VALHEIM_MANAGED)/UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(VALHEIM_MANAGED)/UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

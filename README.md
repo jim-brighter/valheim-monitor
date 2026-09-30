@@ -180,18 +180,27 @@ valheim-monitor/
 │   ├── bin/cdk.ts       # CDK application entrypoint (ValheimMonitor & ValheimLLM stacks)
 │   └── lib/
 │       ├── cdk-stack.ts # AWS CDK stack for Server Status Monitor (DynamoDB, Lambda, Cron)
-│       └── llm-stack.ts # AWS CDK stack for Bukeperry LLM Bot (API Gateway, Bedrock, Worker)
+│       └── llm-stack.ts # AWS CDK stack for Bukeperry LLM (API Gateway, Bedrock, Worker, Game Chat)
+├── mod/
+│   ├── BukeperryMod/    # C# BepInEx/Jötunn client & server mod
+│   ├── dist/            # Compiled BukeperryMod.dll for tracked releases
+│   ├── thunderstore/    # Thunderstore package assets (icon.png, README, templates, publish.sh)
+│   ├── install-server.sh # Standalone installer script for Linux dedicated servers
+│   └── package-server-bundle.sh # Server bundle packaging script
 ├── llm-lambda/
 │   ├── run-local.ts     # Local execution CLI harness for Bedrock prompts
 │   ├── src/
-│   │   ├── handler.ts   # Discord interaction API Gateway handler (Ed25519 signature & deferred 200)
-│   │   ├── worker.ts    # Async worker Lambda executing Bedrock Gemma LLM & state management
-│   │   ├── retriever.ts # RAG retriever matching Valheim topics & troll mental models
+│   │   ├── handler.ts     # Discord interaction API Gateway handler (Ed25519 signature & deferred 200)
+│   │   ├── gameHandler.ts # In-game chat API Gateway handler (x-api-key authorized)
+│   │   ├── core.ts        # Shared Bedrock LLM core & state management
+│   │   ├── worker.ts      # Async worker Lambda executing Bedrock Gemma LLM for Discord
+│   │   ├── retriever.ts   # RAG retriever matching Valheim topics & troll mental models
 │   │   └── data/
 │   │       └── valheim_knowledge.json # Structured Valheim knowledge base
 │   └── test/
-│       ├── handler.test.ts   # Vitest test suite for Discord interaction handler
-│       └── retriever.test.ts # Vitest test suite for RAG retrieval logic
+│       ├── handler.test.ts     # Vitest test suite for Discord interaction handler
+│       ├── gameHandler.test.ts # Vitest test suite for in-game chat handler
+│       └── retriever.test.ts   # Vitest test suite for RAG retrieval logic
 └── monitor-lambda/
     ├── src/
     │   ├── handler.ts   # AWS Lambda handler orchestrating server status evaluations

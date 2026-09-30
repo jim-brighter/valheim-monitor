@@ -1,2 +1,15 @@
 .DS_Store
 node_modules/
+
+# .NET / C# build artifacts
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userprefs
+.vs/
+.idea/
+
+# BepInEx runtime / logs
+*.log
+*.zip
