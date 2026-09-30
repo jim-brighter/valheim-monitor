@@ -107,23 +107,90 @@ namespace BukeperryMod
       return m_hostilePlayerIDs.Contains(player.GetPlayerID());
     }
 
+    private static ZDOID s_cachedBukeperryZDOID = ZDOID.None;
+
+    public static bool TryGetBukeperryLocation(out Vector3 position, out ZDOID zdoid)
+    {
+      zdoid = ZDOID.None;
+      position = Vector3.zero;
+
+      // 1. Live GameObject instance (singleplayer, local client, or host)
+      if (Instances.Count > 0 && Instances[0] != null)
+      {
+        var inst = Instances[0];
+        position = inst.transform.position;
+        if (inst.TryGetComponent<ZNetView>(out var nv) && nv.GetZDO() != null)
+        {
+          zdoid = nv.GetZDO().m_uid;
+          s_cachedBukeperryZDOID = zdoid;
+        }
+        return true;
+      }
+
+      // 2. Cached ZDO in ZDOMan on dedicated server
+      if (s_cachedBukeperryZDOID != ZDOID.None && ZDOMan.instance != null)
+      {
+        ZDO cachedZdo = ZDOMan.instance.GetZDO(s_cachedBukeperryZDOID);
+        if (cachedZdo != null)
+        {
+          position = cachedZdo.GetPosition();
+          zdoid = s_cachedBukeperryZDOID;
+          return true;
+        }
+      }
+
+      // 3. Search ZDOMan for Bukeperry prefab
+      if (ZDOMan.instance != null)
+      {
+        int prefabHash = BukeperryPrefab.PrefabName.GetStableHashCode();
+        var dict = Traverse.Create(ZDOMan.instance).Field<Dictionary<ZDOID, ZDO>>("m_objectsByID")?.Value;
+        if (dict != null)
+        {
+          foreach (var kvp in dict)
+          {
+            if (kvp.Value != null && kvp.Value.GetPrefab() == prefabHash)
+            {
+              s_cachedBukeperryZDOID = kvp.Key;
+              zdoid = kvp.Key;
+              position = kvp.Value.GetPosition();
+              return true;
+            }
+          }
+        }
+      }
+
+      // 4. Fallback to marked spawn position from world seed
+      Vector3? spawnPos = BukeperrySpawner.GetSpawnPosition();
+      if (spawnPos.HasValue)
+      {
+        position = spawnPos.Value;
+        return true;
+      }
+
+      return false;
+    }
+
     public void Speak(string text)
     {
-      if (string.IsNullOrWhiteSpace(text)) return;
-
       ZDOID zdoid = ZDOID.None;
       if (TryGetComponent<ZNetView>(out var nview) && nview.GetZDO() != null)
       {
         zdoid = nview.GetZDO().m_uid;
       }
+      Speak(zdoid, text);
+    }
+
+    public static void Speak(ZDOID zdoid, string text)
+    {
+      if (string.IsNullOrWhiteSpace(text)) return;
 
       if (ZRoutedRpc.instance != null)
       {
         ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "BukeperrySpeechRPC", zdoid, text);
       }
-      else if (Chat.instance != null)
+      else if (Chat.instance != null && Instances.Count > 0)
       {
-        Chat.instance.SetNpcText(gameObject, Vector3.up * 2.5f, 25f, 7f, "", text, large: false);
+        Chat.instance.SetNpcText(Instances[0].gameObject, Vector3.up * 2.5f, 25f, 7f, "", text, large: false);
       }
     }
 
