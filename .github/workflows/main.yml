@@ -33,18 +33,3 @@ jobs:
         uses: jim-brighter/github-release-action@v5
         with:
           num_releases_to_keep: 10
-
-      - name: Package Server Bundle
-        run: ./mod/package-server-bundle.sh
-
-      - name: Upload Assets to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-          gh release upload "$LATEST_TAG" bukeperry-server-bundle.zip --clobber
-
-      - name: Publish to Thunderstore
-        env:
-          THUNDERSTORE_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
-        run: ./mod/thunderstore/publish.sh

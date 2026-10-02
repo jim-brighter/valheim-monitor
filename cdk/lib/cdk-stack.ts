@@ -26,7 +26,8 @@ export class ValheimMonitorStack extends cdk.Stack {
       depsLockFilePath: '../monitor-lambda/package-lock.json',
       entry: '../monitor-lambda/src/handler.ts',
       environment: {
-        TABLE_NAME: table.tableName
+        TABLE_NAME: table.tableName,
+        SECRET_ID: 'valheim-discord-secrets'
       },
       bundling: { minify: true },
       logGroup: new LogGroup(this, 'ValheimMonitorLogGroup', {
@@ -38,7 +39,7 @@ export class ValheimMonitorStack extends cdk.Stack {
 
     table.grantReadWriteData(monitorLambda);
 
-    const secret = Secret.fromSecretNameV2(this, 'ValheimMonitorSecret', 'valheim-monitor-secrets');
+    const secret = Secret.fromSecretNameV2(this, 'ValheimMonitorSecret', 'valheim-discord-secrets');
     secret.grantRead(monitorLambda);
 
     const rule = new Rule(this, 'ValheimMonitorSchedule', {
