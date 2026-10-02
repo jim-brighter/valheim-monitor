@@ -27,8 +27,7 @@ export class ValheimMonitorStack extends cdk.Stack {
       entry: '../monitor-lambda/src/handler.ts',
       environment: {
         TABLE_NAME: table.tableName,
-        SECRET_ID: 'valheim-discord-secrets',
-        SECRET_NAME: 'valheim-discord-secrets'
+        SECRET_ID: 'valheim-discord-secrets'
       },
       bundling: { minify: true },
       logGroup: new LogGroup(this, 'ValheimMonitorLogGroup', {
