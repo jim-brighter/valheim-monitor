@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: write
+      contents: read
     steps:
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v6
@@ -29,22 +29,3 @@ jobs:
           cd cdk
           npm i
           npm run deploy
-      - name: Create Release
-        uses: jim-brighter/github-release-action@v5
-        with:
-          num_releases_to_keep: 10
-
-      - name: Package Server Bundle
-        run: ./mod/package-server-bundle.sh
-
-      - name: Upload Assets to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-          gh release upload "$LATEST_TAG" bukeperry-server-bundle.zip --clobber
-
-      - name: Publish to Thunderstore
-        env:
-          THUNDERSTORE_TOKEN: ${{ secrets.THUNDERSTORE_TOKEN }}
-        run: ./mod/thunderstore/publish.sh
