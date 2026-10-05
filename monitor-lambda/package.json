@@ -7,16 +7,16 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.1142.0",
-    "@aws-sdk/client-secrets-manager": "^3.1142.0",
-    "@aws-sdk/lib-dynamodb": "^3.1142.0"
+    "@aws-sdk/client-dynamodb": "^3.1146.0",
+    "@aws-sdk/client-secrets-manager": "^3.1146.0",
+    "@aws-sdk/lib-dynamodb": "^3.1146.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.164",
-    "@types/node": "^26.6.3",
+    "@types/node": "^26.6.4",
     "esbuild": "^0.28.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.3"
   }
 }
