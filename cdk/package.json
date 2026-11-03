@@ -16,14 +16,14 @@
     "@swc/core": "^1.16.20",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "jest": "^30",
-    "aws-cdk": "2.1146.1",
+    "aws-cdk": "2.1147.0",
     "tsx": "^4.23.15",
     "typescript": "~7.0.2"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.274.0",
+    "aws-cdk-lib": "^2.275.0",
     "constructs": "^10.5.0"
   }
 }
