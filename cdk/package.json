@@ -13,12 +13,12 @@
     "synth": "npm run cdk:monitor-lambda:install && npm run cdk:monitor-lambda:test && cdk synth --all"
   },
   "devDependencies": {
-    "@swc/core": "^1.16.20",
+    "@swc/core": "^1.16.22",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30",
     "@types/node": "^26.6.6",
     "jest": "^30",
-    "aws-cdk": "2.1147.0",
+    "aws-cdk": "2.1148.0",
     "tsx": "^4.23.15",
     "typescript": "~7.0.2"
   },
