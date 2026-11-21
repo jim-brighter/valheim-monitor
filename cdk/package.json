@@ -18,12 +18,12 @@
     "@types/jest": "^30",
     "@types/node": "^26.6.6",
     "jest": "^30",
-    "aws-cdk": "2.1148.0",
+    "aws-cdk": "2.1148.1",
     "tsx": "^4.23.15",
     "typescript": "~7.0.2"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.275.0",
+    "aws-cdk-lib": "^2.277.0",
     "constructs": "^10.5.0"
   }
 }
